@@ -5777,7 +5777,7 @@ function valorPorExtenso(v){
 
 // ═══ MODO REDE — Google Apps Script ═══
 // Cole aqui a URL do seu Apps Script após publicar
-const GAS_URL = localStorage.getItem('gas_url') || '';
+let GAS_URL = localStorage.getItem('gas_url') || '';
 let GAS_TOKEN = localStorage.getItem('gas_token') || '';
 
 let modoRede = false;
@@ -6030,9 +6030,7 @@ function salvarGASUrl() {
   }
   localStorage.setItem('gas_url', url);
   // Atualizar variável global
-  window.GAS_URL = url; 
-  // Reescrever referência (workaround para const)
-  eval('GAS_URL = "' + url.replace(/"/g,'\"') + '"');
+  GAS_URL = url;
   testarGASUrl();
 }
 
