@@ -2738,7 +2738,7 @@ async function doLogin() {
   sessionStorage.setItem('cdi_sess',JSON.stringify(usr));
   enterApp();
 }
-function doLogout() { S.currentUser=null; sessionStorage.removeItem('cdi_sess'); g('app').style.display='none'; g('auth').style.display='flex'; g('auth-login').style.display='block'; g('auth-reg').style.display='none'; g('lu').value=''; g('lp').value=''; }
+function doLogout() { S.currentUser=null; sessionStorage.removeItem('cdi_sess'); g('app').style.display='none'; g('auth').style.display='flex'; g('auth-login').style.display='flex'; g('auth-reg').style.display='none'; g('lu').value=''; g('lp').value=''; }
 function doReg() {
   const nome=g('rn').value.trim(), user=g('ru').value.trim(), pass=g('rp').value, perf=g('rr').value, er=g('rerr');
   if (!nome||!user||!pass){er.style.display='block';er.textContent='Preencha tudo.';return;}
