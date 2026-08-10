@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Casa da Impressora — Simule sua economia alugando impressoras</title>
 <meta name="theme-color" content="#E85D00">
+<meta name="description" content="Descubra em 30 segundos quanto sua empresa pode economizar alugando impressoras ao invés de comprar.">
+<!-- Prévia ao compartilhar no Instagram/WhatsApp/etc. Depois de subir o og-image.png
+     no mesmo repositório, troque a URL abaixo pela definitiva, ex:
+     https://vendascasadaimpressora-sudo.github.io/casadaimpressora/og-image.png -->
+<meta property="og:title" content="Casa da Impressora — Não compre, alugue.">
+<meta property="og:description" content="Simule em 30 segundos quanto sua empresa economiza alugando impressoras.">
+<meta property="og:image" content="https://vendascasadaimpressora-sudo.github.io/casadaimpressora/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -277,8 +286,22 @@
   footer .fname{ color:var(--ink); font-weight:600; margin-bottom:4px; }
 
   @media (max-width:480px){
-    .receipt{ padding:28px 18px 32px; }
-    .torn{ margin:0 -18px 20px; }
+    .topbar{ padding:14px 16px; }
+    .topbar .brand{ font-size:13px; }
+    .topbar .phone{ font-size:12px; }
+    .hero{ padding:44px 16px 36px; }
+    .hero h1{ font-size:clamp(30px,10vw,44px); }
+    .hero p.sub{ font-size:15.5px; }
+    .hero .cta-jump{ width:100%; padding:16px 20px; font-size:15px; }
+    .badges{ font-size:11.5px; gap:6px 12px; }
+    .calc-section{ padding:12px 12px 60px; }
+    .receipt{ padding:26px 16px 30px; }
+    .torn{ margin:0 -16px 20px; }
+    .receipt h2{ font-size:19px; }
+    .printout .save .num{ font-size:26px; }
+    .field input, .field select, .btn{ font-size:16px; } /* evita zoom automático no iOS */
+    .field input, .field select{ padding:13px 14px; }
+    .btn{ padding:16px; }
   }
 </style>
 </head>
@@ -429,7 +452,7 @@
 // Cole aqui a MESMA URL do Google Apps Script já usada no sistema principal
 // (a que aparece em "Configuração da Nuvem" no seu CRM).
 // É para esse endereço que os leads deste formulário serão enviados.
-const APPS_SCRIPT_URL = "COLE_AQUI_A_URL_DO_SEU_GOOGLE_APPS_SCRIPT";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxnPSs1GwN9lJSHrWLyGOvyEaS6HD2Cu1o-HLcD68xfpcgS1TKWeO3wuqddb1WkivBdw/exec";
 
 // Número de WhatsApp real da equipe de vendas (só dígitos, com 55 + DDD).
 // Hoje o site mostra um telefone fixo (51) 3337-4405 — troque pelo WhatsApp
