@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa da Impressora — Simule sua economia alugando impressoras</title>
+<meta name="theme-color" content="#E85D00">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDEDE8;
+    --paper-alt:#E1DFD5;
+    --card:#FBFAF6;
+    --ink:#1C1B19;
+    --ink-soft:#5B564C;
+    --orange:#E85D00;
+    --orange-dark:#C24C00;
+    --cyan:#00AEEF;
+    --magenta:#EC0868;
+    --yellow:#F5B700;
+    --navy:#14213D;
+    --line: rgba(28,27,25,0.14);
+    --radius: 4px;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --display: 'Archivo Black', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  img{max-width:100%;}
+
+  /* ---------- registration marks (signature motif) ---------- */
+  .regmark{
+    position:absolute;
+    width:16px;height:16px;
+    border-radius:50%;
+    border:1.5px solid currentColor;
+    opacity:.55;
+  }
+  .regmark::before,.regmark::after{
+    content:"";
+    position:absolute;
+    background:currentColor;
+  }
+  .regmark::before{ top:50%; left:-6px; right:-6px; height:1px; transform:translateY(-50%); }
+  .regmark::after{ left:50%; top:-6px; bottom:-6px; width:1px; transform:translateX(-50%); }
+  .regmark.c{ color:var(--cyan); }
+  .regmark.m{ color:var(--magenta); }
+  .regmark.y{ color:var(--yellow); }
+  .regmark.k{ color:var(--ink); }
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+    background:var(--ink);
+    color:var(--paper);
+    position:sticky; top:0; z-index:50;
+  }
+  .topbar .brand{
+    font-family:var(--mono); font-weight:600; letter-spacing:.02em;
+    font-size:15px;
+  }
+  .topbar .brand span{ color:var(--orange); }
+  .topbar .phone{
+    font-family:var(--mono); font-size:13px; color:var(--paper-alt);
+    text-decoration:none;
+  }
+  .topbar .phone strong{ color:#fff; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:72px 24px 56px;
+    text-align:center;
+    overflow:hidden;
+  }
+  .hero .regmark{ top:20px; }
+  .hero .regmark.tl{ left:20px; }
+  .hero .regmark.tr{ right:20px; }
+  .hero .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--orange-dark);
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-family:var(--display);
+    font-size:clamp(34px,6vw,64px);
+    line-height:1.02;
+    margin:0 0 18px;
+    letter-spacing:-.01em;
+  }
+  .hero h1 .hl{ color:var(--orange); }
+  .hero p.sub{
+    max-width:560px; margin:0 auto 30px;
+    color:var(--ink-soft); font-size:17px;
+  }
+  .hero .cta-jump{
+    display:inline-block;
+    background:var(--orange); color:#fff;
+    font-family:var(--mono); font-weight:600; font-size:14px;
+    padding:14px 28px; border-radius:var(--radius);
+    text-decoration:none; letter-spacing:.02em;
+    box-shadow:0 4px 0 var(--orange-dark);
+    transition:transform .12s ease;
+  }
+  .hero .cta-jump:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--orange-dark); }
+
+  .badges{
+    display:flex; flex-wrap:wrap; gap:8px 18px; justify-content:center;
+    margin-top:34px; font-family:var(--mono); font-size:12.5px; color:var(--ink-soft);
+  }
+  .badges span::before{ content:"✓ "; color:var(--orange); }
+
+  /* ---------- calculator section ---------- */
+  .calc-section{
+    padding:20px 20px 80px;
+    display:flex; justify-content:center;
+  }
+  .receipt{
+    position:relative;
+    width:100%; max-width:520px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:36px 30px 40px;
+    box-shadow:0 24px 60px -30px rgba(20,33,61,.35);
+  }
+  .receipt .regmark.tl{ top:14px; left:14px; }
+  .receipt .regmark.tr{ top:14px; right:14px; }
+  .perforation{
+    display:flex; gap:6px; justify-content:center;
+    margin-bottom:26px;
+  }
+  .perforation i{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--paper-alt); border:1px solid var(--line);
+  }
+  .receipt h2{
+    font-family:var(--display); font-size:22px; text-align:center;
+    margin:0 0 6px;
+  }
+  .receipt p.lead-copy{
+    text-align:center; color:var(--ink-soft); font-size:14px;
+    margin:0 0 28px;
+  }
+
+  .step{ display:none; }
+  .step.active{ display:block; animation:fadeIn .35s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .field{ margin-bottom:18px; }
+  .field label{
+    display:block; font-family:var(--mono); font-size:12px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .field input, .field select{
+    width:100%; padding:12px 14px;
+    border:1.5px solid var(--line); border-radius:var(--radius);
+    background:#fff; font-family:var(--sans); font-size:15px; color:var(--ink);
+  }
+  .field input:focus, .field select:focus{
+    outline:none; border-color:var(--orange);
+  }
+  .field .hint{ font-size:12px; color:var(--ink-soft); margin-top:5px; }
+
+  .btn{
+    width:100%; padding:15px; border:none; border-radius:var(--radius);
+    background:var(--orange); color:#fff; font-family:var(--mono);
+    font-weight:600; font-size:14.5px; letter-spacing:.03em;
+    cursor:pointer; box-shadow:0 4px 0 var(--orange-dark);
+    transition:transform .12s ease;
+  }
+  .btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--orange-dark); }
+  .btn.secondary{
+    background:transparent; color:var(--ink); box-shadow:none;
+    border:1.5px solid var(--line); margin-top:10px;
+  }
+
+  /* ---- printed result (signature element) ---- */
+  .printout{
+    font-family:var(--mono);
+    background:#fff;
+    border:1px dashed var(--line);
+    padding:22px 18px;
+    margin-bottom:22px;
+    position:relative;
+  }
+  .printout::before{
+    content:"";
+    position:absolute; left:0; right:0; top:0; height:2px;
+    background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));
+    opacity:.7;
+  }
+  .printout .row{
+    display:flex; justify-content:space-between; font-size:13.5px;
+    padding:5px 0; border-bottom:1px dotted var(--line);
+  }
+  .printout .row:last-child{ border-bottom:none; }
+  .printout .row .v{ font-weight:600; }
+  .printout .save{
+    margin-top:14px; text-align:center;
+  }
+  .printout .save .num{
+    font-family:var(--display); font-size:30px; color:var(--orange);
+    letter-spacing:-.01em;
+  }
+  .printout .save .lbl{
+    font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em;
+  }
+  .disclaimer{
+    font-size:11.5px; color:var(--ink-soft); text-align:center; margin:0 0 20px;
+  }
+
+  .torn{
+    height:14px; margin:0 -30px 20px;
+    background:
+      linear-gradient(135deg,var(--paper) 50%,transparent 50%) 0 0,
+      linear-gradient(45deg,var(--paper) 50%,transparent 50%) 0 0;
+    background-size:14px 14px;
+    background-repeat:repeat-x;
+  }
+
+  .success{ text-align:center; }
+  .success .check{
+    width:52px;height:52px;border-radius:50%;
+    background:var(--orange); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; margin:0 auto 16px;
+  }
+  .success h3{ font-family:var(--display); font-size:19px; margin:0 0 10px; }
+  .success p{ color:var(--ink-soft); font-size:14px; margin:0 0 20px; }
+  .wa-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#128C4A; color:#fff; text-decoration:none;
+    font-family:var(--mono); font-size:13.5px; font-weight:600;
+    padding:12px 20px; border-radius:var(--radius);
+  }
+
+  .steps-dots{
+    display:flex; gap:6px; justify-content:center; margin-bottom:24px;
+  }
+  .steps-dots i{
+    width:22px;height:3px;background:var(--line);
+  }
+  .steps-dots i.on{ background:var(--orange); }
+
+  /* ---------- trust bar ---------- */
+  .trust{
+    background:var(--navy); color:var(--paper);
+    padding:40px 24px;
+  }
+  .trust-inner{
+    max-width:920px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:22px; text-align:center;
+  }
+  .trust-inner .item .ic{ font-size:22px; margin-bottom:8px; }
+  .trust-inner .item .tt{ font-family:var(--mono); font-size:12.5px; letter-spacing:.03em; color:#C9D2E3; }
+
+  footer{
+    padding:36px 24px 44px; text-align:center;
+    font-family:var(--mono); font-size:12px; color:var(--ink-soft);
+  }
+  footer .fname{ color:var(--ink); font-weight:600; margin-bottom:4px; }
+
+  @media (max-width:480px){
+    .receipt{ padding:28px 18px 32px; }
+    .torn{ margin:0 -18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">CASA DA <span>IMPRESSORA</span></div>
+    <a class="phone" href="tel:+555133374405"><strong>(51) 3337-4405</strong></a>
+  </header>
+
+  <section class="hero">
+    <span class="regmark k tl"></span>
+    <span class="regmark m tr"></span>
+    <div class="eyebrow">Locação de impressoras · Porto Alegre/RS</div>
+    <h1>NÃO COMPRE,<br><span class="hl">ALUGUE.</span></h1>
+    <p class="sub">Descubra em 30 segundos quanto sua empresa pode economizar alugando impressoras ao invés de comprar — com entrega, instalação, suporte e suprimentos inclusos.</p>
+    <a class="cta-jump" href="#calculadora">🖨️ Simular minha economia</a>
+    <div class="badges">
+      <span>Sem compromisso</span>
+      <span>Resposta em até 1 dia útil</span>
+      <span>Atendimento Porto Alegre e região</span>
+    </div>
+  </section>
+
+  <section class="calc-section" id="calculadora">
+    <div class="receipt">
+      <span class="regmark c tl"></span>
+      <span class="regmark y tr"></span>
+      <div class="perforation">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+
+      <div class="steps-dots" id="dots">
+        <i class="on"></i><i></i><i></i>
+      </div>
+
+      <!-- STEP 1: calculator inputs -->
+      <div class="step active" id="step1">
+        <h2>Simule sua economia</h2>
+        <p class="lead-copy">Responda 3 perguntas rápidas sobre o uso de impressão da sua empresa</p>
+
+        <div class="field">
+          <label for="qtdImpressoras">Quantas impressoras sua empresa usa hoje?</label>
+          <input type="number" id="qtdImpressoras" min="1" value="1" required>
+        </div>
+
+        <div class="field">
+          <label for="volumePaginas">Volume aproximado de páginas por mês</label>
+          <select id="volumePaginas">
+            <option value="149|500">Até 500 páginas</option>
+            <option value="219|2000" selected>De 500 a 2.000 páginas</option>
+            <option value="309|5000">De 2.000 a 5.000 páginas</option>
+            <option value="419|99999">Acima de 5.000 páginas</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="gastoAtual">Quanto vocês gastam hoje por mês, aproximadamente? (opcional)</label>
+          <input type="number" id="gastoAtual" placeholder="Ex: 900" min="0">
+          <div class="hint">Considere manutenção, tinta/toner e depreciação do equipamento. Se não souber, deixe em branco — usamos uma média de mercado.</div>
+        </div>
+
+        <button class="btn" id="btnCalcular">🖨️ Calcular economia</button>
+      </div>
+
+      <!-- STEP 2: printed result -->
+      <div class="step" id="step2">
+        <h2>Sua simulação</h2>
+        <p class="lead-copy">Veja o quanto você pode economizar por mês</p>
+
+        <div class="printout" id="printout">
+          <div class="row"><span>Impressoras informadas</span><span class="v" id="outQtd">–</span></div>
+          <div class="row"><span>Custo estimado hoje (compra/manutenção)</span><span class="v" id="outAtual">–</span></div>
+          <div class="row"><span>Custo estimado alugando na Casa da Impressora</span><span class="v" id="outLocacao">–</span></div>
+          <div class="save">
+            <div class="num" id="outEconomia">–</div>
+            <div class="lbl">de economia estimada por mês</div>
+          </div>
+        </div>
+        <p class="disclaimer">*Valores estimados com base em médias de mercado, não vinculativos. Nossa equipe confirma os valores exatos conforme o seu perfil de uso.</p>
+
+        <div class="torn"></div>
+
+        <button class="btn" id="btnQuero">Quero essa economia — falar com um consultor</button>
+        <button class="btn secondary" id="btnVoltar1">← Refazer simulação</button>
+      </div>
+
+      <!-- STEP 3: lead form -->
+      <div class="step" id="step3">
+        <h2>Quase lá</h2>
+        <p class="lead-copy">Deixe seus dados que nossa equipe entra em contato com a proposta</p>
+
+        <form id="leadForm">
+          <div class="field">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" required>
+          </div>
+          <div class="field">
+            <label for="empresa">Empresa</label>
+            <input type="text" id="empresa" required>
+          </div>
+          <div class="field">
+            <label for="telefone">WhatsApp</label>
+            <input type="tel" id="telefone" placeholder="(51) 90000-0000" required>
+          </div>
+          <div class="field">
+            <label for="email">E-mail (opcional)</label>
+            <input type="email" id="email">
+          </div>
+          <button class="btn" type="submit">📩 Receber proposta</button>
+          <button class="btn secondary" type="button" id="btnVoltar2">← Voltar</button>
+        </form>
+      </div>
+
+      <!-- STEP 4: success -->
+      <div class="step" id="step4">
+        <div class="success">
+          <div class="check">✓</div>
+          <h3>Recibo emitido!</h3>
+          <p>Recebemos seus dados. Nossa equipe entra em contato em até 1 dia útil com sua proposta personalizada.</p>
+          <a class="wa-btn" id="waLink" href="#" target="_blank" rel="noopener">💬 Ou fale agora no WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust">
+    <div class="trust-inner">
+      <div class="item"><div class="ic">🚚</div><div class="tt">ENTREGA E INSTALAÇÃO</div></div>
+      <div class="item"><div class="ic">🧰</div><div class="tt">MANUTENÇÃO INCLUSA</div></div>
+      <div class="item"><div class="ic">🧴</div><div class="tt">SUPRIMENTOS INCLUSOS</div></div>
+      <div class="item"><div class="ic">🤖</div><div class="tt">SUPORTE COM IA</div></div>
+      <div class="item"><div class="ic">📄</div><div class="tt">CONTRATO SEM BUROCRACIA</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="fname">Casa da Impressora Ltda</div>
+    <div>Rua Buarque de Macedo, 748 - Sala 101 - São Geraldo, Porto Alegre/RS</div>
+    <div>(51) 3337-4405</div>
+  </footer>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — Ricardo, ajuste aqui antes de publicar
+   ===================================================================== */
+
+// Cole aqui a MESMA URL do Google Apps Script já usada no sistema principal
+// (a que aparece em "Configuração da Nuvem" no seu CRM).
+// É para esse endereço que os leads deste formulário serão enviados.
+const APPS_SCRIPT_URL = "COLE_AQUI_A_URL_DO_SEU_GOOGLE_APPS_SCRIPT";
+
+// Número de WhatsApp real da equipe de vendas (só dígitos, com 55 + DDD).
+// Hoje o site mostra um telefone fixo (51) 3337-4405 — troque pelo WhatsApp
+// correto se for diferente.
+const WHATSAPP_VENDAS = "555133374405";
+
+// Custo médio estimado (compra + manutenção + suprimentos) por impressora/mês,
+// usado apenas quando o cliente não informa o próprio gasto atual.
+const CUSTO_MEDIO_COMPRA_PADRAO = 380;
+
+/* ===================================================================== */
+
+const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3'), document.getElementById('step4')];
+const dots = document.querySelectorAll('#dots i');
+let simulacao = {};
+
+function goToStep(index){
+  steps.forEach((s,i)=> s.classList.toggle('active', i===index));
+  dots.forEach((d,i)=> d.classList.toggle('on', i<=Math.min(index,2)));
+}
+
+function formatBRL(v){
+  return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL', maximumFractionDigits:0});
+}
+
+document.getElementById('btnCalcular').addEventListener('click', () => {
+  const qtd = Math.max(1, parseInt(document.getElementById('qtdImpressoras').value || '1', 10));
+  const [precoLocacaoUnit] = document.getElementById('volumePaginas').value.split('|').map(Number);
+  const gastoInformado = parseFloat(document.getElementById('gastoAtual').value);
+
+  const custoAtual = (gastoInformado && gastoInformado > 0)
+    ? gastoInformado
+    : qtd * CUSTO_MEDIO_COMPRA_PADRAO;
+
+  const custoLocacao = qtd * precoLocacaoUnit;
+  const economia = Math.max(custoAtual - custoLocacao, 0);
+  const economiaPct = custoAtual > 0 ? Math.round((economia / custoAtual) * 100) : 0;
+
+  simulacao = { qtd, custoAtual, custoLocacao, economia, economiaPct };
+
+  document.getElementById('outQtd').textContent = qtd;
+  document.getElementById('outAtual').textContent = formatBRL(custoAtual) + '/mês';
+  document.getElementById('outLocacao').textContent = formatBRL(custoLocacao) + '/mês';
+  document.getElementById('outEconomia').textContent = economia > 0
+    ? formatBRL(economia) + ' (' + economiaPct + '%)'
+    : 'a combinar';
+
+  goToStep(1);
+});
+
+document.getElementById('btnVoltar1').addEventListener('click', () => goToStep(0));
+document.getElementById('btnVoltar2').addEventListener('click', () => goToStep(1));
+document.getElementById('btnQuero').addEventListener('click', () => goToStep(2));
+
+document.getElementById('leadForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const lead = {
+    tipo: 'lead_site',
+    nome: document.getElementById('nome').value,
+    empresa: document.getElementById('empresa').value,
+    telefone: document.getElementById('telefone').value,
+    email: document.getElementById('email').value,
+    origem: 'Landing page - Simulador de economia',
+    dataEnvio: new Date().toISOString(),
+    simulacao
+  };
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try{
+    if (APPS_SCRIPT_URL && !APPS_SCRIPT_URL.startsWith('COLE_AQUI')){
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Apps Script Web Apps geralmente exigem no-cors no fetch do navegador
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(lead)
+      });
+    } else {
+      // Sem URL configurada ainda: guarda localmente para não perder o lead
+      const pendentes = JSON.parse(localStorage.getItem('leads_pendentes') || '[]');
+      pendentes.push(lead);
+      localStorage.setItem('leads_pendentes', JSON.stringify(pendentes));
+      console.warn('APPS_SCRIPT_URL não configurada — lead salvo apenas em localStorage.');
+    }
+  } catch(err){
+    console.error('Falha ao enviar lead para o Apps Script:', err);
+  }
+
+  const msg = `Olá! Simulei no site e quero saber mais sobre locação de impressoras.%0A%0ANome: ${lead.nome}%0AEmpresa: ${lead.empresa}%0AImpressoras: ${simulacao.qtd}%0AEconomia estimada: ${formatBRL(simulacao.economia)}/mês`;
+  document.getElementById('waLink').href = `https://wa.me/${WHATSAPP_VENDAS}?text=${msg}`;
+
+  goToStep(3);
+});
+</script>
+</body>
+</html>
