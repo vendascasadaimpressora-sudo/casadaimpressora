@@ -6492,7 +6492,10 @@ function atualizarPreviewContrato(){
 
 function gerarContratoLocacao(idx){
   const c = S.comodato[idx]; if(!c) return;
-  const cliCad = S.clientes.find(x=>(x.nome||'').toLowerCase().includes((c.cliente||'').toLowerCase().substring(0,12)));
+  const cCnpjNum = (c.cnpj||'').replace(/\D/g,'');
+  const cliCad = (cCnpjNum && S.clientes.find(x=>(x.cnpj||'').replace(/\D/g,'')===cCnpjNum))
+    || S.clientes.find(x=>(x.nome||'').trim().toLowerCase()===(c.cliente||'').trim().toLowerCase())
+    || S.clientes.find(x=>(x.nome||'').toLowerCase().includes((c.cliente||'').toLowerCase().substring(0,12)));
   const hoje = new Date();
 
   _contratoIdx = idx;
