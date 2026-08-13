@@ -4579,6 +4579,15 @@ function salvarOSeTeleEntrega(){
   });
   saveAll();
   toast('OS salva e adicionada à Tele-Entrega!','ok');
+  // Abre a impressão da via Tele-Entrega na hora, por cima do modal de Nova OS
+  const idx = S.ordens.findIndex(o => o.os === osNum);
+  if(idx < 0) return;
+  _osIdx = idx;
+  _viaAtual = 'te';
+  const o = S.ordens[idx];
+  document.getElementById('mop-title').textContent = 'OS ' + o.os + ' — ' + (o.cliente||'');
+  selecionarVia('te');
+  document.getElementById('modal-os-print').classList.add('open');
 }
 
 function salvarOSeImprimir(via){
@@ -4586,16 +4595,13 @@ function salvarOSeImprimir(via){
   if(!osNum) return;
   const idx = S.ordens.findIndex(o => o.os === osNum);
   if(idx < 0) return;
-  // Fechar modal OS, depois abrir impressão na via correta
-  g('modal-os').classList.remove('open');
-  setTimeout(() => {
-    _osIdx = idx;
-    _viaAtual = via;
-    const o = S.ordens[idx];
-    document.getElementById('mop-title').textContent = 'OS ' + o.os + ' — ' + (o.cliente||'');
-    selecionarVia(via);
-    document.getElementById('modal-os-print').classList.add('open');
-  }, 300);
+  // Abre a impressão por cima do modal de Nova OS, sem fechar nem navegar de tela
+  _osIdx = idx;
+  _viaAtual = via;
+  const o = S.ordens[idx];
+  document.getElementById('mop-title').textContent = 'OS ' + o.os + ' — ' + (o.cliente||'');
+  selecionarVia(via);
+  document.getElementById('modal-os-print').classList.add('open');
 }
 
 // ═══ LOCAÇÃO ═══
@@ -6377,9 +6383,14 @@ function gerarPreviewOS(via) {
           </div>
           <div style="border:1px solid #ddd;border-radius:6px;padding:9px">
             <div style="font-size:8px;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Status</div>
-            <div style="font-size:12px;font-weight:700">${({'ORC':'Orçamento','APV':'Aprovado','AVI':'PRONTO p/ Entrega','GAR':'Garantia','ENT':'ENTREGA','COL':'COLETA'}[o.status]||o.status)}</div>
+            <div style="font-size:12px;font-weight:700">${({'ORC':'Orçamento','APV':'Aprovado','AVI':'PRONTO p/ Entrega','GAR':'Garantia','ENT':'ENTREGA','COL':'COLETA'}[o.status]||o.status||'—')}</div>
             <div style="font-size:10.5px;color:#555">Valor: R$ ${total}</div>
           </div>
+        </div>
+
+        <div style="border:1px solid #ddd;border-radius:6px;padding:9px;margin-bottom:10px">
+          <div style="font-size:8px;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Serviço</div>
+          <div style="font-size:11px">${esc(o.def_con||o.def_rel||o.desc||'—')}</div>
         </div>
 
         ${o.obs?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:5px;padding:7px 10px;margin-bottom:8px;font-size:10px"><strong>Obs:</strong> ${esc(o.obs)}</div>`:''}
