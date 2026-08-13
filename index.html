@@ -1705,6 +1705,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="form-group"><label>Status</label>
       <select id="mos-st"><option value="ORC">Orçamento</option><option value="APV">Aprovado</option><option value="AVI">Aviso Pronto</option><option value="GAR">Garantia</option><option value="POR">Por Enviar</option><option value="ENT">Entrega</option><option value="COL">Coleta</option></select>
     </div>
+    <div class="form-group ff"><label>Serviço / O que fazer (ex: "Levar toner", "Revisão preventiva", "Buscar equipamento")</label><input id="mos-servico" placeholder="Descreva o serviço a ser feito ou o que será entregue..."></div>
     <div class="form-group ff"><label>Defeito Relatado pelo Cliente</label><input id="mos-def-rel" placeholder="O que o cliente relatou..."></div>
     <div class="form-group ff"><label>Defeito Constatado pelo Técnico</label><input id="mos-def-con" placeholder="O que foi constatado..."></div>
     <div class="form-group ff"><label>Acessórios Recebidos</label>
@@ -4161,7 +4162,7 @@ function gerarOSdoCliente(){
   g('mos-mod').value='';
   g('mos-ser').value=''; limparScanOS(); if(typeof modoSerieOS==='function') modoSerieOS('digitar');
   g('mos-st').value='ORC';
-  if(g('mos-def-rel')) g('mos-def-rel').value='';
+  if(g('mos-servico')) g('mos-servico').value=''; if(g('mos-def-rel')) g('mos-def-rel').value='';
   if(g('mos-def-con')) g('mos-def-con').value='';
   if(g('mos-acess'))   g('mos-acess').value='';
   if(g('mos-obs'))     g('mos-obs').value='';
@@ -4326,7 +4327,7 @@ function novaOSdoCliente(idx){
   g('mos-mod').value='';
   g('mos-ser').value=''; limparScanOS(); if(typeof modoSerieOS==='function') modoSerieOS('digitar');
   g('mos-st').value='ORC';
-  if(g('mos-def-rel')) g('mos-def-rel').value='';
+  if(g('mos-servico')) g('mos-servico').value=''; if(g('mos-def-rel')) g('mos-def-rel').value='';
   if(g('mos-def-con')) g('mos-def-con').value='';
   if(g('mos-obs'))     g('mos-obs').value='';
   g('mos-mo').value=''; g('mos-pc').value=''; if(g('mos-tele')) g('mos-tele').value='';
@@ -4336,7 +4337,7 @@ function novaOSdoCliente(idx){
 
 
 function limparFormOS(){
-  ['mos-eq','mos-mod','mos-ser','mos-def-rel','mos-def-con','mos-obs','mos-mo','mos-pc'].forEach(id=>{const e=g(id);if(e)e.value='';}); _ucliLimpar('ucli-os');
+  ['mos-eq','mos-mod','mos-ser','mos-servico','mos-def-rel','mos-def-con','mos-obs','mos-mo','mos-pc','mos-tele'].forEach(id=>{const e=g(id);if(e)e.value='';}); _ucliLimpar('ucli-os');
   const _mciP = g('mos-cli-info'); if (_mciP) _mciP.style.display = 'none';
   g('mos-st').value='ORC';
   ['toner','color','fonte','tampa','regua','sup','cabo-al','cabo-co','fita'].forEach(a=>{const e=g('ac-'+a);if(e)e.checked=false;});
@@ -4501,6 +4502,7 @@ function editOS(idx){
   _ucliSetNome('ucli-os',o.cliente||''); g('mos-eq').value=o.equip||'';
   g('mos-mod').value=o.modelo||''; g('mos-ser').value=o.serie||''; modoSerieOS('digitar');
   g('mos-st').value=o.status||'ORC';
+  if(g('mos-servico')) g('mos-servico').value=o.servico||'';
   if(g('mos-def-rel')) g('mos-def-rel').value=o.def_rel||o.desc||'';
   if(g('mos-def-con')) g('mos-def-con').value=o.def_con||'';
   if(g('mos-obs'))     g('mos-obs').value=o.obs||'';
@@ -4518,6 +4520,7 @@ function coletarDadosOS(){
     modelo:   g('mos-mod').value.trim(),
     serie:    getSerieOS(),
     status:   g('mos-st').value,
+    servico:  g('mos-servico')?.value.trim()||'',
     desc:     defRel,
     def_rel:  defRel,
     def_con:  g('mos-def-con')?.value.trim()||'',
@@ -5428,7 +5431,7 @@ function novaOSdoDrawer(idx){
   setTimeout(()=>_ucliSetNome('ucli-os',c.nome||''),50);
   g('mos-eq').value=''; g('mos-mod').value=''; g('mos-ser').value=''; limparScanOS(); if(typeof modoSerieOS==='function') modoSerieOS('digitar');
   g('mos-st').value='ORC';
-  if(g('mos-def-rel')) g('mos-def-rel').value='';
+  if(g('mos-servico')) g('mos-servico').value=''; if(g('mos-def-rel')) g('mos-def-rel').value='';
   if(g('mos-def-con')) g('mos-def-con').value='';
   if(g('mos-obs'))     g('mos-obs').value='';
   g('mos-mo').value=''; g('mos-pc').value=''; if(g('mos-tele')) g('mos-tele').value='';
@@ -6391,7 +6394,7 @@ function gerarPreviewOS(via) {
 
         <div style="border:2px solid #e8521a;background:#fff8f0;border-radius:6px;padding:10px 12px;margin-bottom:10px">
           <div style="font-size:10px;color:#c04600;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin-bottom:4px">🔧 Serviço</div>
-          <div style="font-size:14px;font-weight:600;color:#111">${esc(o.def_con||o.def_rel||o.desc||'—')}</div>
+          <div style="font-size:14px;font-weight:600;color:#111">${esc(o.servico||o.def_con||o.def_rel||o.desc||'—')}</div>
         </div>
 
         ${o.obs?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:5px;padding:7px 10px;margin-bottom:8px;font-size:10px"><strong>Obs:</strong> ${esc(o.obs)}</div>`:''}
