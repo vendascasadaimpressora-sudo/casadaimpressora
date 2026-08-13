@@ -1713,6 +1713,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="form-group ff"><label>Observações</label><textarea id="mos-obs" rows="2" placeholder="Observações gerais..." style="resize:vertical"></textarea></div>
     <div class="form-group"><label>Mão de Obra (R$)</label><input id="mos-mo" type="number" placeholder="0.00"></div>
     <div class="form-group"><label>Peças (R$)</label><input id="mos-pc" type="number" placeholder="0.00"></div>
+    <div class="form-group"><label>Valor da Tele-Entrega (R$)</label><input id="mos-tele" type="number" placeholder="0.00"></div>
   </div>
 
   <!-- Rodapé com ações -->
@@ -4164,7 +4165,7 @@ function gerarOSdoCliente(){
   if(g('mos-def-con')) g('mos-def-con').value='';
   if(g('mos-acess'))   g('mos-acess').value='';
   if(g('mos-obs'))     g('mos-obs').value='';
-  g('mos-mo').value=''; g('mos-pc').value='';
+  g('mos-mo').value=''; g('mos-pc').value=''; if(g('mos-tele')) g('mos-tele').value='';
   ['toner','color','fonte','tampa','regua','sup','cabo-al','cabo-co','fita'].forEach(a=>{const e=g('ac-'+a);if(e)e.checked=false;});
   // Abrir modal OS (fica sobre o modal de cliente)
   g('modal-os').classList.add('open');
@@ -4328,7 +4329,7 @@ function novaOSdoCliente(idx){
   if(g('mos-def-rel')) g('mos-def-rel').value='';
   if(g('mos-def-con')) g('mos-def-con').value='';
   if(g('mos-obs'))     g('mos-obs').value='';
-  g('mos-mo').value=''; g('mos-pc').value='';
+  g('mos-mo').value=''; g('mos-pc').value=''; if(g('mos-tele')) g('mos-tele').value='';
   ['toner','color','fonte','tampa','regua','sup','cabo-al','cabo-co','fita'].forEach(a=>{const e=g('ac-'+a);if(e)e.checked=false;});
   g('modal-os').classList.add('open');
 }
@@ -4503,7 +4504,7 @@ function editOS(idx){
   if(g('mos-def-rel')) g('mos-def-rel').value=o.def_rel||o.desc||'';
   if(g('mos-def-con')) g('mos-def-con').value=o.def_con||'';
   if(g('mos-obs'))     g('mos-obs').value=o.obs||'';
-  g('mos-mo').value=o.mo||''; g('mos-pc').value=o.pecas||'';
+  g('mos-mo').value=o.mo||''; g('mos-pc').value=o.pecas||''; if(g('mos-tele')) g('mos-tele').value=o.valorTele||'';
   const AMAP={'toner':'Toner/Cart.Preto','color':'Kit Color','fonte':'Manopla/Fonte','tampa':'Tampa Acrílica','regua':'Régua Acrílica','sup':'Sup.F.Solta','cabo-al':'Cabo Alimentação','cabo-co':'Cabo Comunicação','fita':'Fita/Cartucho'};
   Object.entries(AMAP).forEach(([k,v])=>{const e=g('ac-'+k);if(e)e.checked=(o.acessorios||[]).includes(v);});
   g('mos-title').textContent='Editar OS '+o.os;
@@ -4523,7 +4524,8 @@ function coletarDadosOS(){
     acessorios: g('mos-acess')?.value.trim()||'',
     obs:      g('mos-obs')?.value.trim()||'',
     mo:       g('mos-mo').value,
-    pecas:    g('mos-pc').value
+    pecas:    g('mos-pc').value,
+    valorTele: g('mos-tele')?.value||''
   };
 }
 
@@ -5429,7 +5431,7 @@ function novaOSdoDrawer(idx){
   if(g('mos-def-rel')) g('mos-def-rel').value='';
   if(g('mos-def-con')) g('mos-def-con').value='';
   if(g('mos-obs'))     g('mos-obs').value='';
-  g('mos-mo').value=''; g('mos-pc').value='';
+  g('mos-mo').value=''; g('mos-pc').value=''; if(g('mos-tele')) g('mos-tele').value='';
   ['toner','color','fonte','tampa','regua','sup','cabo-al','cabo-co','fita'].forEach(a=>{const e=g('ac-'+a);if(e)e.checked=false;});
   closeDrawer();
   setTimeout(()=>g('modal-os').classList.add('open'),220);
@@ -5828,7 +5830,7 @@ function gerarOSlocacao(idx){
   if(g('mos-def-rel')) g('mos-def-rel').value='Comodato — '+(c.tipo_doc||'');
   if(g('mos-def-con')) g('mos-def-con').value='';
   if(g('mos-obs'))     g('mos-obs').value='';
-  g('mos-mo').value=''; g('mos-pc').value='';
+  g('mos-mo').value=''; g('mos-pc').value=''; if(g('mos-tele')) g('mos-tele').value='';
   ['toner','color','fonte','tampa','regua','sup','cabo-al','cabo-co','fita'].forEach(a=>{const e=g('ac-'+a);if(e)e.checked=false;});
   setTimeout(()=>g('modal-os').classList.add('open'),150);
 }
@@ -6381,23 +6383,22 @@ function gerarPreviewOS(via) {
             <div style="font-size:13px;font-weight:700">${esc(o.equip||'—')} ${esc(o.modelo||'')}</div>
             ${o.serie?`<div style="font-size:9.5px;color:#555">SN: ${o.serie}</div>`:''}
           </div>
-          <div style="border:1px solid #ddd;border-radius:6px;padding:9px">
-            <div style="font-size:8px;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Status</div>
-            <div style="font-size:12px;font-weight:700">${({'ORC':'Orçamento','APV':'Aprovado','AVI':'PRONTO p/ Entrega','GAR':'Garantia','ENT':'ENTREGA','COL':'COLETA'}[o.status]||o.status||'—')}</div>
-            <div style="font-size:10.5px;color:#555">Valor: R$ ${total}</div>
+          <div style="border:2px solid #e8521a;background:#fff4ec;border-radius:6px;padding:9px;text-align:center">
+            <div style="font-size:8px;color:#c04600;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:2px">Valor da Tele-Entrega</div>
+            <div style="font-size:20px;font-weight:800;color:#e8521a;line-height:1.1">R$ ${fmtMoney(o.valorTele||0)}</div>
           </div>
         </div>
 
-        <div style="border:1px solid #ddd;border-radius:6px;padding:9px;margin-bottom:10px">
-          <div style="font-size:8px;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Serviço</div>
-          <div style="font-size:11px">${esc(o.def_con||o.def_rel||o.desc||'—')}</div>
+        <div style="border:2px solid #e8521a;background:#fff8f0;border-radius:6px;padding:10px 12px;margin-bottom:10px">
+          <div style="font-size:10px;color:#c04600;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin-bottom:4px">🔧 Serviço</div>
+          <div style="font-size:14px;font-weight:600;color:#111">${esc(o.def_con||o.def_rel||o.desc||'—')}</div>
         </div>
 
         ${o.obs?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:5px;padding:7px 10px;margin-bottom:8px;font-size:10px"><strong>Obs:</strong> ${esc(o.obs)}</div>`:''}
 
-        <div style="border:1px solid #ddd;border-radius:6px;padding:9px;font-size:10px;margin-bottom:10px">
-          <div style="font-weight:700;margin-bottom:3px">Acessórios a entregar:</div>
-          <div style="color:#333">${acess}</div>
+        <div style="border:2px solid #e8521a;background:#fff8f0;border-radius:6px;padding:10px 12px;margin-bottom:10px">
+          <div style="font-size:10px;color:#c04600;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin-bottom:4px">📦 Acessórios p/ Entrega</div>
+          <div style="font-size:14px;font-weight:600;color:#111">${acess}</div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:2px dashed #e8521a;padding-top:10px;padding-bottom:14px">
