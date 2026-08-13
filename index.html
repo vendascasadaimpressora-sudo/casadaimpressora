@@ -2213,6 +2213,27 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
 
     <!-- ABA: Dados -->
     <div id="orc-tab-dados" style="padding:20px 24px">
+
+      <!-- Tipo: Locação ou Venda -->
+      <div style="margin-bottom:16px;padding:14px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
+        <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;font-weight:600;display:block;margin-bottom:8px">Tipo de Orçamento</label>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button type="button" class="btn-prazo active" id="orc-tipo-locacao" onclick="setTipoOrc('locacao')" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">🔄 Locação</button>
+          <button type="button" class="btn-prazo" id="orc-tipo-venda" onclick="setTipoOrc('venda')" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">💰 Venda</button>
+        </div>
+        <div id="orc-prazo-wrap">
+          <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;font-weight:600;display:block;margin-bottom:8px">Prazo de Locação</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn-prazo active" id="orc-prazo-3"  onclick="setPrazoOrc(3)"  style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer"> 3 meses</button>
+            <button type="button" class="btn-prazo" id="orc-prazo-6"  onclick="setPrazoOrc(6)"  style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer"> 6 meses</button>
+            <button type="button" class="btn-prazo" id="orc-prazo-12" onclick="setPrazoOrc(12)" style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">12 meses</button>
+            <button type="button" class="btn-prazo" id="orc-prazo-24" onclick="setPrazoOrc(24)" style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">24 meses</button>
+          </div>
+        </div>
+        <input type="hidden" id="morc-tipo" value="locacao">
+        <input type="hidden" id="morc-prazo" value="3">
+      </div>
+
       <div class="fg">
         <div class="form-group">
           <label>Nº do Orçamento</label>
@@ -2231,9 +2252,17 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
           <label>Cliente *</label>
           <div id="ucli-orc" class="ucli-wrap"></div>
         </div>
+        <div class="form-group ff">
+          <label>Nome Fantasia</label>
+          <input id="morc-fantasia" placeholder="Nome fantasia (se houver)">
+        </div>
         <div class="form-group">
           <label>CNPJ / CPF</label>
           <input id="morc-cnpj" placeholder="00.000.000/0001-00">
+        </div>
+        <div class="form-group">
+          <label>Insc. Estadual</label>
+          <input id="morc-ie" placeholder="Nº ou ISENTO">
         </div>
         <div class="form-group">
           <label>Telefone / WhatsApp</label>
@@ -2242,6 +2271,30 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
         <div class="form-group">
           <label>Email</label>
           <input id="morc-email" type="email" placeholder="email@empresa.com.br">
+        </div>
+        <div class="form-group">
+          <label>CEP</label>
+          <input id="morc-cep" placeholder="00000-000">
+        </div>
+        <div class="form-group ff">
+          <label>Endereço (Rua / Av.)</label>
+          <input id="morc-endereco" placeholder="Rua, Av. — preenchido pelo cliente">
+        </div>
+        <div class="form-group">
+          <label>Número</label>
+          <input id="morc-numero" placeholder="Ex: 748">
+        </div>
+        <div class="form-group">
+          <label>Bairro</label>
+          <input id="morc-bairro" placeholder="Bairro">
+        </div>
+        <div class="form-group">
+          <label>Cidade</label>
+          <input id="morc-cidade" placeholder="Cidade">
+        </div>
+        <div class="form-group">
+          <label>UF</label>
+          <input id="morc-uf" placeholder="RS" maxlength="2" style="width:80px">
         </div>
         <div class="form-group ff">
           <label>Título / Descrição resumida</label>
@@ -2818,10 +2871,23 @@ function enterApp() {
   initBuscaCliente('ucli-orc', {
     placeholder: 'Buscar por nome, CPF, CNPJ, telefone ou Nº OS...',
     onSelect: (c) => {
-      if (!g('morc-cnpj').value && c.cnpj)  g('morc-cnpj').value = c.cnpj;
-      else if (!g('morc-cnpj').value && c.cpf) g('morc-cnpj').value = c.cpf;
-      if (!g('morc-tel').value && c.tel1)   g('morc-tel').value = c.tel1;
-      if (!g('morc-email').value && c.email) g('morc-email').value = c.email;
+      if (c.cnpj) g('morc-cnpj').value = c.cnpj;
+      else if (c.cpf) g('morc-cnpj').value = c.cpf;
+      if (c.tel1)  g('morc-tel').value   = c.tel1;
+      if (c.email) g('morc-email').value = c.email;
+      if (g('morc-fantasia')) g('morc-fantasia').value = c.fantasia||'';
+      if (g('morc-ie'))       g('morc-ie').value       = c.ie||'';
+      if (g('morc-cep'))      g('morc-cep').value      = c.cep||'';
+      if (g('morc-endereco')) g('morc-endereco').value = c.endereco||'';
+      if (g('morc-numero'))   g('morc-numero').value   = c.numero||'';
+      if (g('morc-bairro'))   g('morc-bairro').value   = c.bairro||'';
+      if (g('morc-cidade'))   g('morc-cidade').value   = c.cidade||'';
+      if (g('morc-uf'))       g('morc-uf').value       = c.uf||'';
+    },
+    onClear: () => {
+      ['morc-fantasia','morc-ie','morc-cep','morc-endereco','morc-numero','morc-bairro','morc-cidade','morc-uf'].forEach(id=>{
+        if (g(id)) g(id).value = '';
+      });
     }
   });
   renderAll(); goPage('agente-ia');
@@ -10162,6 +10228,16 @@ function _orcDadosForm() {
     cnpj:     g('morc-cnpj')?.value.trim()||'',
     tel:      g('morc-tel')?.value.trim()||'',
     email:    g('morc-email')?.value.trim()||'',
+    fantasia: g('morc-fantasia')?.value.trim()||'',
+    ie:       g('morc-ie')?.value.trim()||'',
+    cep:      g('morc-cep')?.value.trim()||'',
+    endereco: g('morc-endereco')?.value.trim()||'',
+    numero:   g('morc-numero')?.value.trim()||'',
+    bairro:   g('morc-bairro')?.value.trim()||'',
+    cidade:   g('morc-cidade')?.value.trim()||'',
+    uf:       g('morc-uf')?.value.trim()||'',
+    tipo:     g('morc-tipo')?.value||'locacao',
+    prazo:    g('morc-prazo')?.value||'3',
     desc:     g('morc-desc')?.value.trim()||'',
     data:     g('morc-data')?.value||'',
     validade: g('morc-validade')?.value||'15',
@@ -10206,6 +10282,16 @@ function abrirModalOrc(idx) {
     g('morc-obs').value     = o.obs||'';
     g('morc-nota').value    = o.nota||'';
     g('orc-desconto').value = o.desconto||'0';
+    if(g('morc-fantasia')) g('morc-fantasia').value = o.fantasia||'';
+    if(g('morc-ie'))       g('morc-ie').value       = o.ie||'';
+    if(g('morc-cep'))      g('morc-cep').value      = o.cep||'';
+    if(g('morc-endereco')) g('morc-endereco').value = o.endereco||'';
+    if(g('morc-numero'))   g('morc-numero').value   = o.numero||'';
+    if(g('morc-bairro'))   g('morc-bairro').value   = o.bairro||'';
+    if(g('morc-cidade'))   g('morc-cidade').value   = o.cidade||'';
+    if(g('morc-uf'))       g('morc-uf').value       = o.uf||'';
+    setTipoOrc(o.tipo||'locacao');
+    setPrazoOrc(parseInt(o.prazo)||3);
     g('morc-title').textContent = 'Editar Orçamento';
     g('morc-num-label').textContent = 'Nº ' + (o.num||'');
   } else {
@@ -10224,6 +10310,16 @@ function abrirModalOrc(idx) {
     g('morc-obs').value     = '';
     g('morc-nota').value    = '';
     g('orc-desconto').value = '0';
+    if(g('morc-fantasia')) g('morc-fantasia').value = '';
+    if(g('morc-ie'))       g('morc-ie').value       = '';
+    if(g('morc-cep'))      g('morc-cep').value      = '';
+    if(g('morc-endereco')) g('morc-endereco').value = '';
+    if(g('morc-numero'))   g('morc-numero').value   = '';
+    if(g('morc-bairro'))   g('morc-bairro').value   = '';
+    if(g('morc-cidade'))   g('morc-cidade').value   = '';
+    if(g('morc-uf'))       g('morc-uf').value       = '';
+    setTipoOrc('locacao');
+    setPrazoOrc(3);
     g('morc-title').textContent = 'Novo Orçamento';
     g('morc-num-label').textContent = num;
   }
@@ -10350,6 +10446,23 @@ function fmtMoney(v) {
   return (parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
+function setTipoOrc(tipo) {
+  if (g('morc-tipo')) g('morc-tipo').value = tipo;
+  const bLoc = g('orc-tipo-locacao'), bVen = g('orc-tipo-venda');
+  if (bLoc) bLoc.classList.toggle('active', tipo === 'locacao');
+  if (bVen) bVen.classList.toggle('active', tipo === 'venda');
+  const wrap = g('orc-prazo-wrap');
+  if (wrap) wrap.style.display = (tipo === 'locacao') ? '' : 'none';
+}
+
+function setPrazoOrc(meses) {
+  if (g('morc-prazo')) g('morc-prazo').value = meses;
+  [3, 6, 12, 24].forEach(m => {
+    const b = g('orc-prazo-' + m);
+    if (b) b.classList.toggle('active', m === meses);
+  });
+}
+
 function saveOrc() {
   const cli = _ucliGetNome('ucli-orc');
   if (!cli) { toast('Informe o cliente!','err'); return; }
@@ -10362,6 +10475,16 @@ function saveOrc() {
     cnpj:     g('morc-cnpj').value.trim(),
     tel:      g('morc-tel').value.trim(),
     email:    g('morc-email').value.trim(),
+    fantasia: g('morc-fantasia')?.value.trim()||'',
+    ie:       g('morc-ie')?.value.trim()||'',
+    cep:      g('morc-cep')?.value.trim()||'',
+    endereco: g('morc-endereco')?.value.trim()||'',
+    numero:   g('morc-numero')?.value.trim()||'',
+    bairro:   g('morc-bairro')?.value.trim()||'',
+    cidade:   g('morc-cidade')?.value.trim()||'',
+    uf:       g('morc-uf')?.value.trim()||'',
+    tipo:     g('morc-tipo')?.value||'locacao',
+    prazo:    g('morc-prazo')?.value||'3',
     desc:     g('morc-desc').value.trim(),
     data:     g('morc-data').value,
     validade: g('morc-validade').value,
@@ -10578,6 +10701,22 @@ function _buildOrcHTML(o, LOGO) {
   const cnpj     = o.cnpj||'—';
   const tel      = o.tel||'—';
   const email    = o.email||'—';
+  const fantasia = o.fantasia||'';
+  const ie       = o.ie||'';
+  const cep      = o.cep||'';
+  const endereco = o.endereco||'';
+  const numero   = o.numero||'';
+  const bairro   = o.bairro||'';
+  const cidade   = o.cidade||'';
+  const uf       = o.uf||'';
+  const tipo     = o.tipo||'locacao';
+  const prazo    = parseInt(o.prazo)||3;
+  const enderecoCompleto = [
+    endereco ? (endereco + (numero?', '+numero:'')) : '',
+    bairro,
+    (cidade||uf) ? (cidade + (uf?'/'+uf:'')) : '',
+    cep ? 'CEP '+cep : ''
+  ].filter(Boolean).join(' — ');
   const descTxt  = o.desc||'';
   const dataISO  = o.data||'';
   const validade = parseInt(o.validade)||15;
@@ -10660,7 +10799,7 @@ function _buildOrcHTML(o, LOGO) {
   <!-- TÍTULO -->
   <div class="pp-titulo">
     <h1>ORÇAMENTO COMERCIAL</h1>
-    <h2>PROPOSTA DE LOCAÇÃO DE EQUIPAMENTOS DE IMPRESSÃO</h2>
+    <h2>${tipo === 'venda' ? 'PROPOSTA DE VENDA DE EQUIPAMENTOS DE IMPRESSÃO' : 'PROPOSTA DE LOCAÇÃO DE EQUIPAMENTOS DE IMPRESSÃO — Prazo: '+prazo+' meses'}</h2>
   </div>
 
   <!-- VALIDADE -->
@@ -10687,9 +10826,10 @@ function _buildOrcHTML(o, LOGO) {
         <div style="margin-top:7px;font-size:9.5px"><strong>Responsável:</strong> ${esc(vendedor)}</div>
       </td>
       <td class="pp-id-cell">
-        <div class="pp-id-nome">${esc(cliente)}</div>
+        <div class="pp-id-nome">${esc(cliente)}${fantasia?' — '+esc(fantasia):''}</div>
         <div class="pp-id-info">
-          CNPJ / CPF: ${esc(cnpj)}<br>
+          CNPJ / CPF: ${esc(cnpj)}${ie?' &nbsp;|&nbsp; Insc. Est.: '+esc(ie):''}<br>
+          ${enderecoCompleto ? esc(enderecoCompleto)+'<br>' : ''}
           ${tel!=='—'?tel+'<br>':''}${email!=='—'?email:''}
         </div>
       </td>
