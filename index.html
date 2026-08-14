@@ -805,7 +805,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
       <!-- CLIENTES -->
       <div class="page" id="page-clientes">
-        <div class="toolbar">
+        <div class="toolbar" style="flex-wrap:wrap">
           <!-- Campo de busca -->
           <div style="position:relative;flex:1;max-width:420px">
             <svg style="position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;opacity:.4" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -837,6 +837,30 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
           </div>
           <div class="tb-right">
             <button class="btn btn-or" onclick="S.editIdx.cli=null;limparFormCli();g('mcli-title').textContent='Cadastro de Cliente';openModal('modal-cli',null)">+ Novo Cliente</button>
+          </div>
+          <!-- Filtro por Categoria -->
+          <div style="display:flex;gap:4px;align-items:center;width:100%">
+            <span style="font-size:11px;color:var(--text3);font-weight:600;margin-right:2px">Categoria:</span>
+            <button id="cb-todos" onclick="setCatFiltroCli('todos')"
+              style="padding:5px 12px;border-radius:99px;border:1px solid rgba(255,106,0,.5);background:rgba(255,106,0,.15);color:#ff6a00;font-size:11px;font-weight:600;cursor:pointer">
+              Todos
+            </button>
+            <button id="cb-locacao" onclick="setCatFiltroCli('locacao')"
+              style="padding:5px 12px;border-radius:99px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer">
+              🔄 Locação
+            </button>
+            <button id="cb-manutencao" onclick="setCatFiltroCli('manutencao')"
+              style="padding:5px 12px;border-radius:99px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer">
+              🔧 Manutenção
+            </button>
+            <button id="cb-venda" onclick="setCatFiltroCli('venda')"
+              style="padding:5px 12px;border-radius:99px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer">
+              💰 Venda
+            </button>
+            <button id="cb-outros" onclick="setCatFiltroCli('outros')"
+              style="padding:5px 12px;border-radius:99px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer">
+              🏷️ Outros
+            </button>
           </div>
         </div>
         <div class="panel">
@@ -1757,6 +1781,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
     <!-- Nome Fantasia -->
     <div class="form-group ff"><label>Nome Fantasia</label><input id="mcli-fantasia" placeholder="Nome fantasia (se houver)"></div>
+
+    <!-- Categoria do Cliente -->
+    <div class="form-group ff">
+      <label>Categoria do Cliente (pode marcar mais de uma)</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button type="button" class="btn-prazo" id="mcli-cat-locacao"    onclick="toggleCatCli('locacao')">🔄 Locação</button>
+        <button type="button" class="btn-prazo" id="mcli-cat-manutencao" onclick="toggleCatCli('manutencao')">🔧 Manutenção</button>
+        <button type="button" class="btn-prazo" id="mcli-cat-venda"      onclick="toggleCatCli('venda')">💰 Venda</button>
+        <button type="button" class="btn-prazo" id="mcli-cat-outros"     onclick="toggleCatCli('outros')">🏷️ Outros</button>
+      </div>
+    </div>
 
     <!-- CNPJ com busca automática -->
     <div class="form-group" style="position:relative">
@@ -3202,6 +3237,26 @@ function setFiltroCli(tipo) {
   buscarCli();
 }
 
+// Filtro por Categoria (Locação/Manutenção/Venda/Outros) na listagem de clientes
+let _catFiltroCli = 'todos';
+function setCatFiltroCli(cat) {
+  _catFiltroCli = cat;
+  ['todos','locacao','manutencao','venda','outros'].forEach(t => {
+    const b = g('cb-'+t);
+    if (!b) return;
+    b.style.background = 'var(--bg3)';
+    b.style.borderColor = 'var(--border2)';
+    b.style.color = 'var(--text2)';
+  });
+  const ativo = g('cb-'+cat);
+  if (ativo) {
+    ativo.style.background = 'rgba(255,106,0,.15)';
+    ativo.style.borderColor = 'rgba(255,106,0,.5)';
+    ativo.style.color = '#ff6a00';
+  }
+  renderCli();
+}
+
 function limparBuscaCli() {
   const el = g('q-cli');
   if (el) el.value = '';
@@ -3230,6 +3285,7 @@ function renderCli() {
   const indexados = S.clientes.map((c, i) => ({ c, i }));
 
   const filtrados = indexados.filter(({ c }) => {
+    if (_catFiltroCli !== 'todos' && !(c.categorias||[]).includes(_catFiltroCli)) return false;
     if (!q) return true;
     const f = _filtroCli;
 
@@ -3275,6 +3331,10 @@ function renderCli() {
     <td class="link" style="font-weight:500" onclick="openDrawerCli(${i})">
       ${esc(c.nome)}
       ${c.fantasia?`<div style="font-size:10px;font-weight:400;color:var(--text3);font-style:italic;margin-top:1px">${esc(c.fantasia)}</div>`:''}
+      ${(c.categorias&&c.categorias.length)?`<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:3px">${c.categorias.map(cat=>{
+        const M={locacao:['🔄 Locação','#a855f7'],manutencao:['🔧 Manutenção','#2563eb'],venda:['💰 Venda','#16a34a'],outros:['🏷️ Outros','#71717a']}[cat]||[cat,'#71717a'];
+        return `<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;background:${M[1]}1a;color:${M[1]}">${M[0]}</span>`;
+      }).join('')}</div>`:''}
     </td>
     <td class="mono" style="color:var(--text2)">${c.cnpj || '—'}</td>
     <td style="color:var(--text2)">${c.cidade || '—'}</td>
@@ -4025,6 +4085,7 @@ function editCli(idx) {
   const c=S.clientes[idx];
   g('mcli-nom').value  = c.nome    ||'';
   if(g('mcli-fantasia')) g('mcli-fantasia').value = c.fantasia||'';
+  setCategoriasCli(c.categorias||[]);
   g('mcli-cnpj').value = c.cnpj    ||'';
   g('mcli-tel').value  = c.tel1    ||'';
   if(g('mcli-tel2')) g('mcli-tel2').value = c.tel2||'';
@@ -4070,6 +4131,7 @@ function saveCli() {
   const d={
     nome:g('mcli-nom').value.trim(),
     fantasia:g('mcli-fantasia')?.value.trim()||'',
+    categorias: [..._cliCategorias],
     cnpj:g('mcli-cnpj').value.trim(),
     tel1:g('mcli-tel').value.trim(),
     tel2:g('mcli-tel2')?.value.trim()||'',
@@ -4125,6 +4187,7 @@ function limparFormCli(){
     'mcli-cep','mcli-end','mcli-num','mcli-comp','mcli-bai','mcli-cid',
     'mcli-uf','mcli-ie','mcli-im','mcli-cont'];
   campos.forEach(id=>{ if(g(id)) g(id).value=''; });
+  setCategoriasCli([]);
   if(g('mcli-cep-status'))  g('mcli-cep-status').textContent='';
   if(g('mcli-cnpj-status')) g('mcli-cnpj-status').textContent='';
   // Reset instalação
@@ -10459,6 +10522,26 @@ function calcTotalOrc() {
 
 function fmtMoney(v) {
   return (parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+let _cliCategorias = [];
+function toggleCatCli(cat) {
+  const btn = g('mcli-cat-' + cat);
+  const idx = _cliCategorias.indexOf(cat);
+  if (idx >= 0) {
+    _cliCategorias.splice(idx, 1);
+    if (btn) btn.classList.remove('active');
+  } else {
+    _cliCategorias.push(cat);
+    if (btn) btn.classList.add('active');
+  }
+}
+function setCategoriasCli(arr) {
+  _cliCategorias = Array.isArray(arr) ? [...arr] : [];
+  ['locacao', 'manutencao', 'venda', 'outros'].forEach(cat => {
+    const btn = g('mcli-cat-' + cat);
+    if (btn) btn.classList.toggle('active', _cliCategorias.includes(cat));
+  });
 }
 
 function setTipoOrc(tipo) {
