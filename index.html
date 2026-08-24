@@ -864,7 +864,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
           </div>
         </div>
         <div class="panel">
-          <div class="ph"><h3>Clientes cadastrados</h3><span class="phc" id="cnt-cli"></span><button class="btn btn-xs" style="margin-left:8px;font-size:10px;opacity:.5" onclick="diagCli()">diagnóstico</button></div>
+          <div class="ph"><h3>Clientes cadastrados</h3><span class="phc" id="cnt-cli"></span><button class="btn btn-xs" style="margin-left:8px;font-size:10px;opacity:.5" onclick="diagCli()">diagnóstico</button><button class="btn btn-xs" style="margin-left:6px;font-size:11px;background:rgba(220,38,38,.1);color:#dc2626;border-color:rgba(220,38,38,.35)" onclick="localizarDuplicadosCli()" title="Encontrar clientes com o mesmo CNPJ/CPF">🔎 Duplicados</button></div>
           <table class="tbl"><thead><tr><th>Nome</th><th>CNPJ/CPF</th><th>Cidade</th><th>Telefone</th><th>Email</th><th></th></tr></thead>
           <tbody id="tb-cli"></tbody></table>
           <div class="pag" id="pag-cli"></div>
@@ -2265,10 +2265,28 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
             <button type="button" class="btn-prazo" id="orc-prazo-6"  onclick="setPrazoOrc(6)"  style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer"> 6 meses</button>
             <button type="button" class="btn-prazo" id="orc-prazo-12" onclick="setPrazoOrc(12)" style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">12 meses</button>
             <button type="button" class="btn-prazo" id="orc-prazo-24" onclick="setPrazoOrc(24)" style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">24 meses</button>
+            <button type="button" class="btn-prazo" id="orc-prazo-evento" onclick="setPrazoOrc('evento')" style="padding:6px 11px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">📅 Locação p/ Evento</button>
+          </div>
+          <div id="orc-evento-wrap" style="display:none;margin-top:12px;padding:12px;background:#fff;border:1px dashed var(--border2);border-radius:6px">
+            <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;font-weight:600;margin-bottom:8px">Período do Evento (não precisa fechar mês)</div>
+            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+              <div class="form-group" style="margin:0">
+                <label style="font-size:10px">Data de início</label>
+                <input type="date" id="orc-evento-ini" onchange="atualizarDiasEvento()">
+              </div>
+              <div class="form-group" style="margin:0">
+                <label style="font-size:10px">Data de término</label>
+                <input type="date" id="orc-evento-fim" onchange="atualizarDiasEvento()">
+              </div>
+              <div style="font-size:12px;font-weight:700;color:var(--or);padding-bottom:8px" id="orc-evento-dias-lbl"></div>
+            </div>
           </div>
         </div>
         <input type="hidden" id="morc-tipo" value="locacao">
         <input type="hidden" id="morc-prazo" value="3">
+        <input type="hidden" id="morc-evento-ini" value="">
+        <input type="hidden" id="morc-evento-fim" value="">
+        <input type="hidden" id="morc-evento-dias" value="">
       </div>
 
       <div class="fg">
@@ -3359,10 +3377,109 @@ function renderCli() {
       <button class="btn btn-xs" style="background:rgba(13,148,136,.12);color:#0d9488;border-color:rgba(13,148,136,.4)" onclick="abrirPortalCliente(${i})" title="Abrir Portal do Cliente (visão para compartilhar)">🔗 Portal</button>
       <button class="btn btn-xs" style="background:rgba(217,94,0,.1);color:var(--or);border-color:rgba(217,94,0,.35)" onclick="abrirLinhaDoTempoCliente(${i})" title="Ver todos os lançamentos deste cliente (OS, contratos, aditivos, orçamentos, financeiro)">🕒 Histórico</button>
       <button class="btn btn-xs" style="background:rgba(37,99,235,.1);color:#2563eb;border-color:rgba(37,99,235,.35)" onclick="abrirEquipamentosCliente(${i})" title="Ver equipamentos locados por este cliente (data, OS, modelo e valor)">📦 Equipamentos</button>
+      <button class="btn btn-xs" style="background:rgba(220,38,38,.1);color:#dc2626;border-color:rgba(220,38,38,.35)" onclick="excluirCliente(${i})" title="Excluir cliente">🗑️ Excluir</button>
     </td></tr>`;
   }).join('') || '<tr><td colspan="6" class="empty">Nenhum cliente encontrado.</td></tr>';
 
   renderPag('pag-cli', filtrados.length, pg, n => { S.pages.cli = n; renderCli(); });
+}
+
+// ═══ EXCLUSÃO DE CLIENTE (com verificação de vínculos) ═══
+function _vinculosCliente(c){
+  const nomeNorm = (c.nome||'').toLowerCase();
+  const sub10 = nomeNorm.substring(0,10);
+  const sub12 = nomeNorm.substring(0,12);
+  const contratos  = S.comodato.filter(x=>(x.cliente||'').toLowerCase().includes(sub10)).length;
+  const ordens     = S.ordens.filter(x=>(x.cliente||'').toLowerCase().includes(sub12)).length;
+  const orcamentos = (S.orcamentos||[]).filter(x=>(x.cliente||'').toLowerCase().includes(sub10)).length;
+  const equips     = (S.equipamentos||[]).filter(x=>(x.cliente||'').toLowerCase().includes(sub10)).length;
+  return {contratos, ordens, orcamentos, equips, total: contratos+ordens+orcamentos+equips};
+}
+function excluirCliente(idx){
+  const c = S.clientes[idx]; if(!c) return;
+  const v = _vinculosCliente(c);
+  let msg = 'Excluir o cliente "'+c.nome+'"?\nEsta ação não pode ser desfeita.';
+  if(v.total>0){
+    const partes=[];
+    if(v.contratos)  partes.push(v.contratos+' contrato(s) de locação');
+    if(v.ordens)      partes.push(v.ordens+' OS');
+    if(v.orcamentos)  partes.push(v.orcamentos+' orçamento(s)');
+    if(v.equips)      partes.push(v.equips+' equipamento(s) vinculado(s)');
+    msg = '⚠️ Atenção: este cliente possui '+partes.join(', ')+'.\n\n'+
+          'Excluir o cadastro NÃO apaga esses registros — eles continuarão existindo soltos, sem cliente vinculado.\n\n'+
+          'Deseja realmente excluir "'+c.nome+'"?';
+  }
+  if(!confirm(msg)) return;
+  S.clientes.splice(idx,1);
+  saveAll();
+  renderCli();
+  renderDash();
+  toast('Cliente excluído.','ok');
+}
+
+// ═══ LOCALIZAR CLIENTES DUPLICADOS (mesmo CNPJ/CPF) ═══
+function localizarDuplicadosCli(){
+  const grupos = {};
+  S.clientes.forEach((c,i)=>{
+    const doc = (c.cnpj||'').replace(/[^0-9]/g,'');
+    if(!doc || doc.length<8) return; // ignora sem CNPJ/CPF válido
+    (grupos[doc] = grupos[doc] || []).push({c,i});
+  });
+  const duplicados = Object.entries(grupos).filter(([doc,arr])=>arr.length>1);
+
+  if(!duplicados.length){
+    toast('Nenhum cliente duplicado encontrado (mesmo CNPJ/CPF).','ok');
+    return;
+  }
+
+  const html = `
+    <div style="padding:16px;max-width:640px">
+      <h3 style="margin:0 0 4px">🔎 Clientes duplicados</h3>
+      <p style="font-size:12px;color:var(--text3);margin:0 0 14px">
+        Encontrados ${duplicados.length} grupo(s) de cadastros com o mesmo CNPJ/CPF. Revise e mantenha apenas um cadastro de cada.
+      </p>
+      ${duplicados.map(([doc,arr])=>`
+        <div style="border:1px solid var(--border2);border-radius:8px;padding:10px;margin-bottom:10px">
+          <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:6px">CNPJ/CPF: ${esc(doc)}</div>
+          ${arr.map(({c,i})=>{
+            const v=_vinculosCliente(c);
+            return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px dashed var(--border2)">
+              <div>
+                <div style="font-weight:600;font-size:13px">${esc(c.nome)}</div>
+                <div style="font-size:11px;color:var(--text3)">${esc(c.cidade||'—')} · ${v.total?v.total+' registro(s) vinculado(s)':'sem vínculos'}</div>
+              </div>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-xs" onclick="fecharModalDinamico('modal-dup');editCli(${i})">Editar</button>
+                <button class="btn btn-xs" style="background:rgba(220,38,38,.1);color:#dc2626;border-color:rgba(220,38,38,.35)" onclick="excluirCliente(${i});localizarDuplicadosCli();">🗑️ Excluir</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      `).join('')}
+      <div style="text-align:right;margin-top:10px">
+        <button class="btn btn-xs" onclick="fecharModalDinamico('modal-dup')">Fechar</button>
+      </div>
+    </div>`;
+  _abrirModalDinamico('modal-dup', html);
+}
+// Cria (se necessário) e abre um modal simples e genérico para conteúdo dinâmico,
+// independente do sistema de modais principal (que usa a classe 'open').
+function _abrirModalDinamico(id, innerHtml){
+  let modal = document.getElementById(id);
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = id;
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999';
+    modal.innerHTML = `<div class="modal-box" style="background:#fff;border-radius:10px;max-height:85vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.25)"></div>`;
+    modal.addEventListener('click', e=>{ if(e.target===modal) fecharModalDinamico(id); });
+    document.body.appendChild(modal);
+  }
+  modal.querySelector('.modal-box').innerHTML = innerHtml;
+  modal.style.display = 'flex';
+}
+function fecharModalDinamico(id){
+  const modal = document.getElementById(id);
+  if(modal) modal.style.display = 'none';
 }
 
 
@@ -10327,6 +10444,9 @@ function _orcDadosForm() {
     uf:       g('morc-uf')?.value.trim()||'',
     tipo:     g('morc-tipo')?.value||'locacao',
     prazo:    g('morc-prazo')?.value||'3',
+    eventoIni: g('morc-evento-ini')?.value||'',
+    eventoFim: g('morc-evento-fim')?.value||'',
+    eventoDias:g('morc-evento-dias')?.value||'',
     desc:     g('morc-desc')?.value.trim()||'',
     data:     g('morc-data')?.value||'',
     validade: g('morc-validade')?.value||'15',
@@ -10380,7 +10500,15 @@ function abrirModalOrc(idx) {
     if(g('morc-cidade'))   g('morc-cidade').value   = o.cidade||'';
     if(g('morc-uf'))       g('morc-uf').value       = o.uf||'';
     setTipoOrc(o.tipo||'locacao');
-    setPrazoOrc(parseInt(o.prazo)||3);
+    if (o.prazo === 'evento') {
+      if(g('orc-evento-ini')) g('orc-evento-ini').value = o.eventoIni||'';
+      if(g('orc-evento-fim')) g('orc-evento-fim').value = o.eventoFim||'';
+      setPrazoOrc('evento');
+    } else {
+      if(g('orc-evento-ini')) g('orc-evento-ini').value = '';
+      if(g('orc-evento-fim')) g('orc-evento-fim').value = '';
+      setPrazoOrc(parseInt(o.prazo)||3);
+    }
     g('morc-title').textContent = 'Editar Orçamento';
     g('morc-num-label').textContent = 'Nº ' + (o.num||'');
   } else {
@@ -10408,6 +10536,8 @@ function abrirModalOrc(idx) {
     if(g('morc-cidade'))   g('morc-cidade').value   = '';
     if(g('morc-uf'))       g('morc-uf').value       = '';
     setTipoOrc('locacao');
+    if(g('orc-evento-ini')) g('orc-evento-ini').value = '';
+    if(g('orc-evento-fim')) g('orc-evento-fim').value = '';
     setPrazoOrc(3);
     g('morc-title').textContent = 'Novo Orçamento';
     g('morc-num-label').textContent = num;
@@ -10570,11 +10700,40 @@ function setPrazoOrc(meses) {
     const b = g('orc-prazo-' + m);
     if (b) b.classList.toggle('active', m === meses);
   });
+  const bEvento = g('orc-prazo-evento');
+  if (bEvento) bEvento.classList.toggle('active', meses === 'evento');
+  const wrapEvento = g('orc-evento-wrap');
+  if (wrapEvento) wrapEvento.style.display = (meses === 'evento') ? '' : 'none';
+  if (meses === 'evento') atualizarDiasEvento();
+}
+
+// Calcula a quantidade de dias do evento a partir das datas escolhidas
+// e mantém os campos ocultos (morc-evento-*) sincronizados para o saveOrc().
+function atualizarDiasEvento() {
+  const ini = g('orc-evento-ini')?.value || '';
+  const fim = g('orc-evento-fim')?.value || '';
+  if (g('morc-evento-ini')) g('morc-evento-ini').value = ini;
+  if (g('morc-evento-fim')) g('morc-evento-fim').value = fim;
+  const lbl = g('orc-evento-dias-lbl');
+  if (!ini || !fim) {
+    if (g('morc-evento-dias')) g('morc-evento-dias').value = '';
+    if (lbl) lbl.textContent = '';
+    return;
+  }
+  const dIni = new Date(ini + 'T00:00:00');
+  const dFim = new Date(fim + 'T00:00:00');
+  let dias = Math.round((dFim - dIni) / 86400000) + 1; // inclusive (dia de início conta)
+  if (dias < 1) dias = 1;
+  if (g('morc-evento-dias')) g('morc-evento-dias').value = dias;
+  if (lbl) lbl.textContent = dias + (dias === 1 ? ' dia' : ' dias') + ' de locação';
 }
 
 function saveOrc() {
   const cli = _ucliGetNome('ucli-orc');
   if (!cli) { toast('Informe o cliente!','err'); return; }
+  if ((g('morc-prazo')?.value||'') === 'evento' && !(g('morc-evento-ini')?.value && g('morc-evento-fim')?.value)) {
+    toast('Informe as datas de início e término do evento!','err'); return;
+  }
   const sub  = _orcItens.reduce((s,it)=>s+(it.qtd*it.vl),0);
   const desc = parseFloat(g('orc-desconto').value)||0;
   const d = {
@@ -10594,6 +10753,9 @@ function saveOrc() {
     uf:       g('morc-uf')?.value.trim()||'',
     tipo:     g('morc-tipo')?.value||'locacao',
     prazo:    g('morc-prazo')?.value||'3',
+    eventoIni: g('morc-evento-ini')?.value||'',
+    eventoFim: g('morc-evento-fim')?.value||'',
+    eventoDias:g('morc-evento-dias')?.value||'',
     desc:     g('morc-desc').value.trim(),
     data:     g('morc-data').value,
     validade: g('morc-validade').value,
@@ -10819,7 +10981,13 @@ function _buildOrcHTML(o, LOGO) {
   const cidade   = o.cidade||'';
   const uf       = o.uf||'';
   const tipo     = o.tipo||'locacao';
-  const prazo    = parseInt(o.prazo)||3;
+  const ehEvento = o.prazo === 'evento';
+  const prazo    = ehEvento ? 0 : (parseInt(o.prazo)||3);
+  const fmtBR = iso => { if(!iso) return ''; const [y,m,d]=iso.split('-'); return d&&m&&y?`${d}/${m}/${y}`:''; };
+  const eventoLbl = ehEvento
+    ? 'Locação para Evento — ' + (o.eventoDias||'') + (Number(o.eventoDias)===1?' dia':' dias') +
+      (o.eventoIni&&o.eventoFim ? ' (' + fmtBR(o.eventoIni) + ' a ' + fmtBR(o.eventoFim) + ')' : '')
+    : prazo + ' meses';
   const enderecoCompleto = [
     endereco ? (endereco + (numero?', '+numero:'')) : '',
     bairro,
@@ -10908,7 +11076,7 @@ function _buildOrcHTML(o, LOGO) {
   <!-- TÍTULO -->
   <div class="pp-titulo">
     <h1>ORÇAMENTO COMERCIAL</h1>
-    <h2>${tipo === 'venda' ? 'PROPOSTA DE VENDA DE EQUIPAMENTOS DE IMPRESSÃO' : 'PROPOSTA DE LOCAÇÃO DE EQUIPAMENTOS DE IMPRESSÃO — Prazo: '+prazo+' meses'}</h2>
+    <h2>${tipo === 'venda' ? 'PROPOSTA DE VENDA DE EQUIPAMENTOS DE IMPRESSÃO' : 'PROPOSTA DE LOCAÇÃO DE EQUIPAMENTOS DE IMPRESSÃO — Prazo: '+eventoLbl}</h2>
   </div>
 
   <!-- VALIDADE -->
