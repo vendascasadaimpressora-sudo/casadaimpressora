@@ -2864,6 +2864,17 @@ function _corrigirScrollHorizontal(){
     document.querySelectorAll('.panel, .tbl, table, .g2, .nav-cards').forEach(el=>{
       if (el.scrollLeft) el.scrollLeft = 0;
     });
+    // Rede de segurança extra: garante que exista NO MÁXIMO uma página "active"
+    // ao mesmo tempo. Se alguma página anterior (ex: o painel de Atendimento,
+    // que ocupa a tela inteira) ficar "presa" como ativa junto com a atual, ela
+    // empurra o conteúdo real para bem mais baixo — dando a impressão de um
+    // espaço em branco enorme até a lista/tela aparecer.
+    if (window._currentPage) {
+      const idAtual = 'page-'+window._currentPage;
+      document.querySelectorAll('.page.active').forEach(p=>{
+        if (p.id !== idAtual) p.classList.remove('active');
+      });
+    }
   } catch(e){}
 }
 // Rede de segurança 1: verifica periodicamente (cobre qualquer caso não previsto).
@@ -2886,6 +2897,7 @@ try {
 } catch(e){}
 
 function goPage(page, ctx) {
+  window._currentPage = page;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   // Atualizar tn-item (novo topnav horizontal)
   document.querySelectorAll('.tn-item').forEach(n=>n.classList.remove('active'));
@@ -2910,6 +2922,14 @@ function goPage(page, ctx) {
   if (page==='indicadores') renderIndicadores();
   // Se vier com contexto (filtrar por cliente etc)
   if (ctx) applyCtx(page, ctx);
+  // Reseta a rolagem para o topo ao trocar de página — evita que a posição
+  // de rolagem de uma tela anterior (ex: uma lista longa) "vaze" para a
+  // próxima página e faça parecer que falta conteúdo lá em cima.
+  window.scrollTo(0,0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  const mainAreaEl = g('main-area');
+  if (mainAreaEl) mainAreaEl.scrollTop = 0;
   _corrigirScrollHorizontal();
   setTimeout(_corrigirScrollHorizontal, 50);
   setTimeout(_corrigirScrollHorizontal, 300);
