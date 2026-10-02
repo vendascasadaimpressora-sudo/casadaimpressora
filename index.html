@@ -513,6 +513,139 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 #page-agente-ia.active{ display:flex; }
 /* Ocultar topnav antiga */
 .topnav,.topbar{ display:none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   UPGRADE VISUAL v4.1 — só aparência (não altera dados nem funções)
+   ═══════════════════════════════════════════════════════════════════ */
+:root{
+  --r:10px;--r2:14px;
+  --shadow:0 1px 2px rgba(15,30,53,.06),0 2px 8px rgba(15,30,53,.05);
+  --shadow-md:0 8px 24px rgba(15,30,53,.12);
+  --shadow-lg:0 24px 60px rgba(15,30,53,.28);
+  --ring:0 0 0 3px rgba(217,94,0,.18);
+}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:rgba(217,94,0,.2)}
+*{scrollbar-width:thin;scrollbar-color:#c3c8d2 transparent}
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-thumb{background:#c3c8d2;border-radius:99px;border:2px solid transparent;background-clip:content-box}
+*::-webkit-scrollbar-thumb:hover{background:#9aa1ae;background-clip:content-box;border:2px solid transparent}
+
+/* ───────── MODAIS ───────── */
+.mbg{background:rgba(15,30,53,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);padding:16px}
+.mbg.open{animation:cdiFade .16s ease-out}
+.mbg.open>.modal{animation:cdiPop .2s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes cdiFade{from{opacity:0}to{opacity:1}}
+@keyframes cdiPop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.modal{
+  border:none;border-radius:18px;
+  box-shadow:var(--shadow-lg);
+  border-top:4px solid var(--or);
+}
+/* modais padrão (com espaçamento de 26px): título e rodapé ocupam a largura toda e ficam fixos ao rolar */
+.modal:not([style*="padding:0"])>h3{
+  margin:-26px -26px 18px;padding:20px 26px 14px;font-size:17px;font-weight:700;letter-spacing:-.2px;
+  color:var(--text);border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:#fff;z-index:3;border-radius:14px 14px 0 0;
+}
+.modal:not([style*="padding:0"])>.mfoot{
+  position:sticky;bottom:0;z-index:3;background:#fff;
+  margin:18px -26px -26px;padding:14px 26px;
+  border-top:1px solid var(--border);border-radius:0 0 18px 18px;
+  box-shadow:0 -6px 14px rgba(15,30,53,.05);
+}
+.modal h3{font-size:17px;font-weight:700;letter-spacing:-.2px}
+.fg{gap:14px}
+.form-group label,.fld label{
+  font-size:11px;letter-spacing:.3px;margin-bottom:5px;color:#4b5563;font-weight:600;
+}
+.form-group input,.form-group select,.form-group textarea,.fld input,.fld select{
+  padding:10px 12px;border-radius:var(--r);border:1px solid var(--border2);
+  background:#fff;font-size:13.5px;transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.form-group input:hover,.form-group select:hover,.form-group textarea:hover{border-color:#b6bcc9}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus,
+.fld input:focus,.fld select:focus{border-color:var(--or);box-shadow:var(--ring);outline:none;background:#fff}
+.form-group input::placeholder,.form-group textarea::placeholder{color:#a4abb8}
+.form-group textarea{min-height:76px;resize:vertical;line-height:1.45}
+.form-group input[readonly],.form-group input:disabled,.form-group select:disabled{background:var(--bg3);color:var(--text2)}
+
+/* ───────── BOTÕES ───────── */
+.btn{
+  padding:8px 16px;border-radius:var(--r);font-weight:600;font-size:12.5px;
+  box-shadow:0 1px 1px rgba(15,30,53,.04);transition:background .15s,border-color .15s,box-shadow .15s,transform .1s;
+}
+.btn:hover{box-shadow:0 2px 6px rgba(15,30,53,.1)}
+.btn:active{transform:translateY(1px);box-shadow:none}
+.btn-or{background:linear-gradient(180deg,#E8680A,#D95E00);border-color:#C25400}
+.btn-or:hover{background:linear-gradient(180deg,#F27410,#E26200);box-shadow:0 4px 12px rgba(217,94,0,.35)}
+.btn-sm{padding:5px 11px}
+.btn:focus-visible,.tn-item:focus-visible,.snav-item:focus-visible,.nav-card:focus-visible{outline:2px solid var(--or);outline-offset:2px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+/* ───────── CARTÕES, PAINÉIS, MÉTRICAS ───────── */
+.panel{border-radius:var(--r2);border:1px solid var(--border);box-shadow:var(--shadow)}
+.ph{padding:14px 18px;background:#fff;border-bottom:1px solid var(--border)}
+.ph h3{font-size:14px;font-weight:700}
+.metric{border-radius:var(--r2);padding:16px 18px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s,border-color .15s}
+.metric::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--border2)}
+.metric.c-or::before{background:var(--or)}.metric.c-gr::before{background:var(--green)}
+.metric.c-re::before{background:var(--red)}.metric.c-bl::before{background:var(--blue)}
+.metric.c-yl::before{background:var(--yellow)}.metric.c-pu::before{background:var(--purple)}
+.metric:hover{background:#fff;transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.metric .lbl{font-size:10.5px;letter-spacing:.4px}
+.metric .val{font-size:23px;letter-spacing:-.5px}
+.nav-card{border-radius:var(--r2)}
+
+/* ───────── TABELAS ───────── */
+.tbl th{
+  padding:10px 14px;background:#F7F8FA;color:#5b6472;font-size:10.5px;letter-spacing:.5px;
+  border-bottom:1px solid var(--border2);position:sticky;top:0;z-index:1;
+}
+.tbl td{padding:11px 14px}
+.tbl tbody tr{transition:background .12s}
+.tbl tbody tr:nth-child(even) td{background:#FBFBFC}
+.tbl tbody tr:hover td{background:rgba(217,94,0,.05)}
+.badge{border-radius:6px;padding:3px 9px;font-weight:600}
+
+/* ───────── CAMPOS DE BUSCA E BARRA DE FERRAMENTAS ───────── */
+.searchbar,.toolbar select{border-radius:var(--r);padding:9px 13px;transition:border-color .15s,box-shadow .15s}
+.searchbar:focus,.toolbar select:focus{border-color:var(--or);box-shadow:var(--ring);outline:none}
+.pb{border-radius:7px;padding:5px 10px}
+.fq-btn,.conn-chip,.btn-prazo{transition:background .15s,border-color .15s,color .15s}
+
+/* ───────── GAVETA LATERAL (DRAWER) ───────── */
+.drawer-bg{background:rgba(15,30,53,.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.drawer{box-shadow:-12px 0 40px rgba(15,30,53,.22);border-left:none;border-top:4px solid var(--or)}
+.drawer-head{background:#fff;padding:18px 22px}
+.drawer-head h3{font-size:16px;font-weight:700}
+.drawer-body{padding:18px 22px}
+.drawer-section h4{font-size:11px;color:#5b6472;letter-spacing:.4px}
+
+/* ───────── AVISOS (TOAST) ───────── */
+.toast{border-radius:12px;padding:13px 18px;font-weight:500;box-shadow:var(--shadow-lg);border:1px solid var(--border);border-left-width:5px}
+
+/* ───────── LOGIN ───────── */
+#auth{background:radial-gradient(1200px 600px at 20% 10%,#1d3052 0%,#0f1e35 55%,#0a1424 100%)}
+.auth-box{border:none;border-radius:20px;box-shadow:var(--shadow-lg);border-top:5px solid var(--or)}
+.btn-auth{border-radius:var(--r);padding:13px;background:linear-gradient(180deg,#E8680A,#D95E00)}
+
+/* ───────── CELULAR ───────── */
+@media(max-width:640px){
+  .mbg{padding:0;align-items:flex-end}
+  .modal{width:100%!important;max-width:100%!important;max-height:94vh!important;border-radius:20px 20px 0 0}
+  .mbg.open>.modal{animation:cdiSheet .24s cubic-bezier(.2,.9,.3,1)}
+  @keyframes cdiSheet{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+  .fg{grid-template-columns:1fr}
+  .modal:not([style*="padding:0"]){padding:20px}
+  .modal:not([style*="padding:0"])>h3{margin:-20px -20px 16px;padding:18px 20px 12px}
+  .modal:not([style*="padding:0"])>.mfoot{margin:16px -20px -20px;padding:12px 20px}
+  .drawer{width:100%!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .mbg.open,.mbg.open>.modal{animation:none!important}
+  *{transition-duration:.01ms!important}
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
@@ -11815,5 +11948,37 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+
+<!-- ═══ UPGRADE v4.1: tecla Esc fecha o modal aberto (usa o próprio botão Cancelar/Fechar) ═══ -->
+<script>
+(function(){
+  // acessibilidade: avisa leitores de tela que são janelas
+  function marcar(){document.querySelectorAll('.mbg > .modal').forEach(function(m){m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');});}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',marcar);else marcar();
+
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Escape')return;
+    var abertos=document.querySelectorAll('.mbg.open');
+    if(!abertos.length)return;
+    // pega o modal que está por cima (maior z-index; em empate, o último no HTML)
+    var topo=null,zTopo=-1;
+    abertos.forEach(function(m){
+      var z=parseInt(getComputedStyle(m).zIndex,10)||0;
+      if(z>=zTopo){zTopo=z;topo=m;}
+    });
+    if(!topo)return;
+    // 1) tenta o botão "Cancelar/Fechar/✕" do próprio modal (mantém a lógica original)
+    var botoes=topo.querySelectorAll('button');
+    for(var i=0;i<botoes.length;i++){
+      var t=(botoes[i].textContent||'').trim().toLowerCase();
+      if(/^(cancelar|fechar|✕|×|x|✖)$/.test(t)||/^(✕|×|✖)/.test(t)){botoes[i].click();return;}
+    }
+    // 2) modais criados dinamicamente fecham ao clicar no fundo
+    if(topo.getAttribute('onclick')){topo.click();return;}
+    // 3) último recurso: função padrão do sistema
+    if(typeof closeModal==='function'&&topo.id){closeModal(topo.id);}
+  });
+})();
+</script>
 </body>
 </html>
