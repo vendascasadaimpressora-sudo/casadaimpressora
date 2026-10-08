@@ -1739,6 +1739,16 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
             <button class="btn btn-or" onclick="enviarBootstrapNuvem()">📤 Enviar dados locais para a nuvem agora</button>
             <div id="bootstrap-status" style="margin-top:10px;font-size:13px;display:none"></div>
             <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+            <div class="ph" style="padding:0;margin-bottom:6px"><h3>💾 Backup no seu computador</h3></div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.6;margin-bottom:10px">
+              Baixa um arquivo com TODOS os dados que estão salvos neste navegador (clientes, OS, contratos, financeiro, orçamentos...).
+              Não precisa de internet nem de login na nuvem. Guarde o arquivo em um lugar seguro (pendrive ou Google Drive).
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:6px">
+              <button class="btn btn-or" onclick="baixarBackupLocal()">⬇️ Baixar backup local (.json)</button>
+            </div>
+            <div id="backup-local-status" style="font-size:13px;margin-bottom:10px;display:none"></div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
             <div class="ph" style="padding:0;margin-bottom:12px"><h3>Backups na nuvem</h3></div>
             <div style="display:flex;gap:8px;margin-bottom:12px">
               <button class="btn btn-or" onclick="forcarBackup()">Criar Backup Agora</button>
@@ -1757,6 +1767,99 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
           <tbody id="tb-us"></tbody></table>
         </div>
       </div>
+
+
+═══════════════════════════════════════════════════════ -->
+<div id="page-orcamentos" class="page">
+
+  <!-- Toolbar superior -->
+  <div class="toolbar" style="margin-bottom:10px">
+    <div style="font-size:16px;font-weight:700;color:var(--text)">📋 Orçamentos</div>
+    <input class="searchbar searchbar-wide" id="orc-search" placeholder="🔍 Buscar por cliente ou número..." oninput="renderOrcamentos()">
+    <div class="tb-right">
+      <button class="btn btn-or" onclick="abrirModalOrc(null)">+ Novo Orçamento</button>
+    </div>
+  </div>
+
+  <!-- Controles de ordenação e filtro estilo estoquenow -->
+  <div style="display:flex;align-items:center;gap:20px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;font-weight:600;color:var(--text2)">Ordenar por</span>
+      <select id="orc-sort" onchange="renderOrcamentos()" style="padding:5px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;cursor:pointer">
+        <option value="data_desc">Data de Emissão (decrescente)</option>
+        <option value="data_asc">Data de Emissão (crescente)</option>
+        <option value="valor_desc">Valor (maior primeiro)</option>
+        <option value="valor_asc">Valor (menor primeiro)</option>
+        <option value="cliente_az">Cliente (A–Z)</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
+        <input type="radio" name="orc-filtro-view" value="todos" checked onchange="renderOrcamentos()" style="accent-color:var(--or)"> Todos os Orçamentos
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
+        <input type="radio" name="orc-filtro-view" value="ativos" onchange="renderOrcamentos()" style="accent-color:var(--or)"> Em Aberto
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
+        <input type="radio" name="orc-filtro-view" value="aprovado" onchange="renderOrcamentos()" style="accent-color:var(--or)"> Aprovados
+      </label>
+    </div>
+  </div>
+
+  <!-- Métricas rápidas -->
+  <div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px" id="orc-metrics"></div>
+
+  <!-- Lista estilo estoquenow -->
+  <div class="panel" style="padding:0;overflow:hidden">
+    <!-- Cabeçalho da lista -->
+    <div style="display:grid;grid-template-columns:160px 1fr 140px 140px 120px 130px 110px auto;gap:0;padding:10px 16px;background:var(--bg3);border-bottom:2px solid var(--border);font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;align-items:center">
+      <span>Cliente</span>
+      <span></span>
+      <span>Emissão</span>
+      <span>Validade</span>
+      <span>Atendente</span>
+      <span>Situação</span>
+      <span style="text-align:right">Total (R$)</span>
+      <span></span>
+    </div>
+    <div id="orc-lista"></div>
+    <div id="orc-empty" class="empty" style="display:none;padding:40px">Nenhum orçamento encontrado.</div>
+  </div>
+
+  <div style="display:flex;justify-content:center;margin-top:12px" id="orc-pager"></div>
+</div>
+
+
+<!-- INDICADORES (Dashboard analítico) -->
+<div id="page-indicadores" class="page">
+  <div class="toolbar" style="margin-bottom:14px">
+    <div style="font-size:16px;font-weight:700;color:var(--text)">📊 Indicadores do Negócio</div>
+    <div class="tb-right">
+      <button class="btn btn-sm" onclick="renderIndicadores()">🔄 Atualizar</button>
+    </div>
+  </div>
+  <div id="ind-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px"></div>
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><h3>📦 Ociosidade de Equipamentos</h3></div>
+      <div id="ind-ociosidade" style="padding:14px"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>💰 Inadimplência (mensalidades)</h3></div>
+      <div id="ind-inadimplencia" style="padding:14px"></div>
+    </div>
+  </div>
+  <div class="g2" style="margin-top:16px">
+    <div class="panel">
+      <div class="ph"><h3>🛠️ Equipamentos que mais geram OS</h3></div>
+      <table class="tbl"><thead><tr><th>Equipamento</th><th>Nº de OS</th></tr></thead><tbody id="ind-ranking-os"></tbody></table>
+    </div>
+    <div class="panel">
+      <div class="ph"><h3>🏆 Clientes por receita de locação</h3></div>
+      <table class="tbl"><thead><tr><th>Cliente</th><th>Receita mensal</th></tr></thead><tbody id="ind-ranking-cli"></tbody></table>
+    </div>
+  </div>
+</div>
 
     </div><!-- /content -->
       </div><!-- /main-area -->
@@ -2257,65 +2360,6 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
 
 <!-- ═══════════════════════════════════════════════════════
      PÁGINA: ORÇAMENTOS
-═══════════════════════════════════════════════════════ -->
-<div id="page-orcamentos" class="page" style="padding:20px">
-
-  <!-- Toolbar superior -->
-  <div class="toolbar" style="margin-bottom:10px">
-    <div style="font-size:16px;font-weight:700;color:var(--text)">📋 Orçamentos</div>
-    <input class="searchbar searchbar-wide" id="orc-search" placeholder="🔍 Buscar por cliente ou número..." oninput="renderOrcamentos()">
-    <div class="tb-right">
-      <button class="btn btn-or" onclick="abrirModalOrc(null)">+ Novo Orçamento</button>
-    </div>
-  </div>
-
-  <!-- Controles de ordenação e filtro estilo estoquenow -->
-  <div style="display:flex;align-items:center;gap:20px;margin-bottom:14px;flex-wrap:wrap">
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:12px;font-weight:600;color:var(--text2)">Ordenar por</span>
-      <select id="orc-sort" onchange="renderOrcamentos()" style="padding:5px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;cursor:pointer">
-        <option value="data_desc">Data de Emissão (decrescente)</option>
-        <option value="data_asc">Data de Emissão (crescente)</option>
-        <option value="valor_desc">Valor (maior primeiro)</option>
-        <option value="valor_asc">Valor (menor primeiro)</option>
-        <option value="cliente_az">Cliente (A–Z)</option>
-      </select>
-    </div>
-    <div style="display:flex;align-items:center;gap:16px">
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
-        <input type="radio" name="orc-filtro-view" value="todos" checked onchange="renderOrcamentos()" style="accent-color:var(--or)"> Todos os Orçamentos
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
-        <input type="radio" name="orc-filtro-view" value="ativos" onchange="renderOrcamentos()" style="accent-color:var(--or)"> Em Aberto
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
-        <input type="radio" name="orc-filtro-view" value="aprovado" onchange="renderOrcamentos()" style="accent-color:var(--or)"> Aprovados
-      </label>
-    </div>
-  </div>
-
-  <!-- Métricas rápidas -->
-  <div class="g2" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px" id="orc-metrics"></div>
-
-  <!-- Lista estilo estoquenow -->
-  <div class="panel" style="padding:0;overflow:hidden">
-    <!-- Cabeçalho da lista -->
-    <div style="display:grid;grid-template-columns:160px 1fr 140px 140px 120px 130px 110px auto;gap:0;padding:10px 16px;background:var(--bg3);border-bottom:2px solid var(--border);font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;align-items:center">
-      <span>Cliente</span>
-      <span></span>
-      <span>Emissão</span>
-      <span>Validade</span>
-      <span>Atendente</span>
-      <span>Situação</span>
-      <span style="text-align:right">Total (R$)</span>
-      <span></span>
-    </div>
-    <div id="orc-lista"></div>
-    <div id="orc-empty" class="empty" style="display:none;padding:40px">Nenhum orçamento encontrado.</div>
-  </div>
-
-  <div style="display:flex;justify-content:center;margin-top:12px" id="orc-pager"></div>
-</div>
 
 <!-- ═══════════════════════════════════════════════════════
      MODAL: ORÇAMENTO
@@ -2498,37 +2542,6 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
           WhatsApp
         </button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- INDICADORES (Dashboard analítico) -->
-<div id="page-indicadores" class="page" style="padding:20px">
-  <div class="toolbar" style="margin-bottom:14px">
-    <div style="font-size:16px;font-weight:700;color:var(--text)">📊 Indicadores do Negócio</div>
-    <div class="tb-right">
-      <button class="btn btn-sm" onclick="renderIndicadores()">🔄 Atualizar</button>
-    </div>
-  </div>
-  <div id="ind-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px"></div>
-  <div class="g2">
-    <div class="panel">
-      <div class="ph"><h3>📦 Ociosidade de Equipamentos</h3></div>
-      <div id="ind-ociosidade" style="padding:14px"></div>
-    </div>
-    <div class="panel">
-      <div class="ph"><h3>💰 Inadimplência (mensalidades)</h3></div>
-      <div id="ind-inadimplencia" style="padding:14px"></div>
-    </div>
-  </div>
-  <div class="g2" style="margin-top:16px">
-    <div class="panel">
-      <div class="ph"><h3>🛠️ Equipamentos que mais geram OS</h3></div>
-      <table class="tbl"><thead><tr><th>Equipamento</th><th>Nº de OS</th></tr></thead><tbody id="ind-ranking-os"></tbody></table>
-    </div>
-    <div class="panel">
-      <div class="ph"><h3>🏆 Clientes por receita de locação</h3></div>
-      <table class="tbl"><thead><tr><th>Cliente</th><th>Receita mensal</th></tr></thead><tbody id="ind-ranking-cli"></tbody></table>
     </div>
   </div>
 </div>
@@ -11979,6 +11992,29 @@ if ('serviceWorker' in navigator) {
     if(typeof closeModal==='function'&&topo.id){closeModal(topo.id);}
   });
 })();
+</script>
+
+<!-- ═══ UPGRADE v4.2: backup local (baixa uma cópia dos dados deste navegador) ═══ -->
+<script>
+function baixarBackupLocal(){
+  var st=document.getElementById('backup-local-status');
+  function msg(t,ok){ if(st){st.style.display='block';st.style.color=ok?'var(--green)':'var(--red)';st.textContent=t;} }
+  try{
+    var bruto=localStorage.getItem('cdi_v3');
+    if(!bruto){ msg('Não encontrei dados salvos neste navegador.',false); return; }
+    var dados=JSON.parse(bruto);
+    var n=function(k){return Array.isArray(dados[k])?dados[k].length:0;};
+    var d=new Date(), z=function(x){return String(x).padStart(2,'0');};
+    var carimbo=d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'_'+z(d.getHours())+'h'+z(d.getMinutes());
+    var arquivo='backup_casadaimpressora_'+carimbo+'.json';
+    var blob=new Blob([bruto],{type:'application/json'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=arquivo;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+    msg('✓ Backup baixado: '+arquivo+' — '+n('clientes')+' clientes, '+n('ordens')+' OS, '+n('comodato')+' contratos, '+n('orcamentos')+' orçamentos.',true);
+  }catch(e){ console.error(e); msg('Erro ao gerar o backup. Tente de novo.',false); }
+}
 </script>
 </body>
 </html>
