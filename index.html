@@ -546,10 +546,10 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .modal:not([style*="padding:0"])>h3{
   margin:-26px -26px 18px;padding:20px 26px 14px;font-size:17px;font-weight:700;letter-spacing:-.2px;
   color:var(--text);border-bottom:1px solid var(--border);
-  position:sticky;top:0;background:#fff;z-index:3;border-radius:14px 14px 0 0;
+  position:sticky;top:-26px;background:#fff;z-index:3;border-radius:14px 14px 0 0;
 }
 .modal:not([style*="padding:0"])>.mfoot{
-  position:sticky;bottom:0;z-index:3;background:#fff;
+  position:sticky;bottom:-26px;z-index:3;background:#fff;
   margin:18px -26px -26px;padding:14px 26px;
   border-top:1px solid var(--border);border-radius:0 0 18px 18px;
   box-shadow:0 -6px 14px rgba(15,30,53,.05);
@@ -638,9 +638,71 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   @keyframes cdiSheet{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
   .fg{grid-template-columns:1fr}
   .modal:not([style*="padding:0"]){padding:20px}
-  .modal:not([style*="padding:0"])>h3{margin:-20px -20px 16px;padding:18px 20px 12px}
-  .modal:not([style*="padding:0"])>.mfoot{margin:16px -20px -20px;padding:12px 20px}
+  .modal:not([style*="padding:0"])>h3{margin:-20px -20px 16px;padding:18px 20px 12px;top:-20px}
+  .modal:not([style*="padding:0"])>.mfoot{margin:16px -20px -20px;padding:12px 20px;bottom:-20px}
   .drawer{width:100%!important}
+}
+
+/* ───────── UPGRADE v4.2: Clientes + período de locação ───────── */
+.form-group label{text-transform:none;font-size:12px;letter-spacing:0;color:#4b5563;font-weight:600}
+.fg6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.fg6>*{min-width:0}
+.sp1{grid-column:span 1}.sp2{grid-column:span 2}.sp3{grid-column:span 3}.sp4{grid-column:span 4}.sp6{grid-column:1/-1}
+.sec-t{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text);margin-top:8px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.sec-t::before{content:'';width:4px;height:14px;border-radius:2px;background:var(--or);flex-shrink:0}
+.sec-t.first{margin-top:0}
+.btn-busca{padding:0 14px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;border:1px solid var(--border2);background:#fff;transition:background .15s,border-color .15s}
+.btn-busca.bl{color:#1D4ED8;border-color:rgba(37,99,235,.35);background:rgba(37,99,235,.06)}
+.btn-busca.bl:hover{background:rgba(37,99,235,.14)}
+.btn-busca.gr{color:#047857;border-color:rgba(5,150,105,.35);background:rgba(5,150,105,.07)}
+.btn-busca.gr:hover{background:rgba(5,150,105,.15)}
+#mcli-inst-fields input{background:#fff!important;padding:10px 12px!important}
+#mcli-inst-fields label{text-transform:none!important;font-size:12px!important;letter-spacing:0!important;color:#4b5563!important}
+/* lista de clientes */
+#tb-cli td{vertical-align:middle}
+.cli-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center;min-width:250px;max-width:470px;margin-left:auto}
+#tb-cli .mono,#tb-cli .cli-tag,.cli-act .btn{white-space:nowrap}
+#tb-cli td:nth-child(5){white-space:nowrap}
+@media(min-width:1200px){#tb-cli td:last-child{width:1%;white-space:nowrap}.cli-act{flex-wrap:nowrap;max-width:none}}
+.btn-lk{background:transparent;border-color:transparent;color:var(--text2);padding:3px 8px}
+.btn-lk:hover{background:var(--bg3);border-color:var(--border2)}
+.btn-lk.lk-teal{color:#0F766E}.btn-lk.lk-teal:hover{background:rgba(13,148,136,.1);border-color:rgba(13,148,136,.3)}
+.btn-lk.lk-or{color:#C2410C}.btn-lk.lk-or:hover{background:rgba(217,94,0,.1);border-color:rgba(217,94,0,.3)}
+.btn-lk.lk-bl{color:#1D4ED8}.btn-lk.lk-bl:hover{background:rgba(37,99,235,.1);border-color:rgba(37,99,235,.3)}
+.cli-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid;font-family:var(--font)}
+.cli-tag.loc{background:rgba(124,58,237,.08);color:#6D28D9;border-color:rgba(124,58,237,.28)}
+.cli-tag.os{background:rgba(217,94,0,.09);color:#C2410C;border-color:rgba(217,94,0,.3)}
+/* período de locação (orçamento) */
+.orc-loc-box{border:1px solid var(--border2);border-radius:12px;padding:14px 16px;background:#FBFBFC}
+.orc-loc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text)}
+.orc-loc-dur{font-size:12px;font-weight:600;color:var(--or)}
+.orc-loc-dur.err{color:var(--red)}
+.orc-loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.orc-loc-quick{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:12px;color:var(--text2)}
+.orc-per{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;font-weight:600;color:var(--text2)}
+.orc-per select,.orc-per input[type=date]{padding:5px 9px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text);font-size:12px;font-family:var(--font)}
+.orc-per input[type=date]:focus,.orc-per select:focus{outline:none;border-color:var(--or);box-shadow:var(--ring)}
+@media(max-width:700px){
+  .fg6{grid-template-columns:1fr}
+  .fg6>*{grid-column:1/-1!important}
+  .orc-loc-grid{grid-template-columns:1fr}
+  .cli-act{min-width:0;justify-content:flex-start}
+}
+
+/* itens do orçamento editáveis */
+.orc-item-head{display:grid;grid-template-columns:3fr 70px 84px 118px 112px 26px;gap:8px;padding:0 12px 2px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)}
+.orc-item-row.edit{grid-template-columns:3fr 70px 84px 118px 112px 26px;background:#fff}
+.oi-desc{display:flex;align-items:center;gap:8px;min-width:0}
+.oi-in{width:100%;min-width:0;padding:7px 9px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-size:13px;color:var(--text);font-family:var(--font)}
+.oi-in:hover{border-color:#b6bcc9}
+.oi-in:focus{outline:none;border-color:var(--or);box-shadow:var(--ring)}
+.oi-n{text-align:right;font-family:var(--mono)}
+.oi-tot{text-align:right;font-family:var(--mono);font-weight:600;color:var(--text);white-space:nowrap}
+@media(max-width:700px){
+  .orc-item-head{display:none}
+  .orc-item-row.edit{grid-template-columns:70px 1fr 1fr 26px}
+  .orc-item-row.edit .oi-desc{grid-column:1/-1}
+  .orc-item-row.edit .oi-tot{grid-column:1/4;text-align:left}
 }
 @media(prefers-reduced-motion:reduce){
   .mbg.open,.mbg.open>.modal{animation:none!important}
@@ -968,13 +1030,10 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
               Telefone
             </button>
           </div>
-          <div class="tb-right">
-            <button class="btn btn-or" onclick="S.editIdx.cli=null;limparFormCli();g('mcli-title').textContent='Cadastro de Cliente';openModal('modal-cli',null)">+ Novo Cliente</button>
-          </div>
         </div>
         <div class="panel">
           <div class="ph"><h3>Clientes cadastrados</h3><span class="phc" id="cnt-cli"></span><button class="btn btn-xs" style="margin-left:8px;font-size:10px;opacity:.5" onclick="diagCli()">diagnóstico</button></div>
-          <table class="tbl"><thead><tr><th>Nome</th><th>CNPJ/CPF</th><th>Cidade</th><th>Telefone</th><th>Email</th><th></th></tr></thead>
+          <table class="tbl"><thead><tr><th>Cliente</th><th>CNPJ/CPF</th><th>Cidade</th><th>Telefone</th><th>Situação</th><th style="text-align:right">Ações</th></tr></thead>
           <tbody id="tb-cli"></tbody></table>
           <div class="pag" id="pag-cli"></div>
         </div>
@@ -1769,16 +1828,13 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
       </div>
 
 
-═══════════════════════════════════════════════════════ -->
+<!-- PÁGINA: ORÇAMENTOS -->
 <div id="page-orcamentos" class="page">
 
   <!-- Toolbar superior -->
   <div class="toolbar" style="margin-bottom:10px">
     <div style="font-size:16px;font-weight:700;color:var(--text)">📋 Orçamentos</div>
     <input class="searchbar searchbar-wide" id="orc-search" placeholder="🔍 Buscar por cliente ou número..." oninput="renderOrcamentos()">
-    <div class="tb-right">
-      <button class="btn btn-or" onclick="abrirModalOrc(null)">+ Novo Orçamento</button>
-    </div>
   </div>
 
   <!-- Controles de ordenação e filtro estilo estoquenow -->
@@ -1803,6 +1859,18 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
         <input type="radio" name="orc-filtro-view" value="aprovado" onchange="renderOrcamentos()" style="accent-color:var(--or)"> Aprovados
       </label>
+    </div>
+    <div class="orc-per">
+      <span>Período</span>
+      <select id="orc-per-tipo" onchange="renderOrcamentos()">
+        <option value="entrega">Data de entrega</option>
+        <option value="devolucao">Data de devolução</option>
+        <option value="locacao">Locação ativa no período</option>
+        <option value="emissao">Data de emissão</option>
+      </select>
+      <span>de</span><input type="date" id="orc-per-de" onchange="renderOrcamentos()">
+      <span>até</span><input type="date" id="orc-per-ate" onchange="renderOrcamentos()">
+      <button class="btn btn-sm" onclick="limparPeriodoOrc()">Limpar</button>
     </div>
   </div>
 
@@ -1982,74 +2050,55 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   </div>
 </div></div>
 
-<div class="mbg" id="modal-cli"><div class="modal" style="width:620px;max-width:97vw">
+<div class="mbg" id="modal-cli"><div class="modal" style="width:780px;max-width:97vw">
   <h3 id="mcli-title">Cadastro de Cliente</h3>
-  <div class="fg">
+  <div class="fg fg6">
 
-    <!-- Nome -->
-    <div class="form-group ff"><label>Nome / Razão Social</label><input id="mcli-nom" placeholder="Nome completo ou Razão Social"></div>
-
-    <!-- Nome Fantasia -->
-    <div class="form-group ff"><label>Nome Fantasia</label><input id="mcli-fantasia" placeholder="Nome fantasia (se houver)"></div>
-
-    <!-- CNPJ com busca automática -->
-    <div class="form-group" style="position:relative">
+    <div class="sec-t first">Identificação</div>
+    <div class="form-group sp6"><label>Nome / Razão Social</label><input id="mcli-nom" placeholder="Nome completo ou Razão Social"></div>
+    <div class="form-group sp3"><label>Nome Fantasia</label><input id="mcli-fantasia" placeholder="Nome fantasia (se houver)"></div>
+    <div class="form-group sp3" style="position:relative">
       <label style="display:flex;align-items:center;gap:6px">
         CNPJ / CPF
         <span id="mcli-cnpj-status" style="font-size:10px;font-weight:400;color:var(--text3)"></span>
       </label>
       <div style="display:flex;gap:6px">
-        <input id="mcli-cnpj" placeholder="00.000.000/0001-00 ou 000.000.000-00"
-          oninput="formatarCNPJCPF(this)"
-          style="flex:1">
-        <button onclick="buscarCNPJ()"
-          style="padding:0 14px;border-radius:var(--r);border:1px solid var(--border2);background:rgba(59,130,246,.12);color:#60a5fa;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">
-          🔍 Buscar
-        </button>
+        <input id="mcli-cnpj" placeholder="00.000.000/0001-00" oninput="formatarCNPJCPF(this)" style="flex:1;min-width:0">
+        <button type="button" class="btn-busca bl" onclick="buscarCNPJ()">🔍 Buscar</button>
       </div>
     </div>
+    <div class="form-group sp3"><label>Inscrição Estadual</label><input id="mcli-ie" placeholder="Nº ou ISENTO"></div>
+    <div class="form-group sp3"><label>Inscrição Municipal</label><input id="mcli-im" placeholder="Nº ou ISENTO"></div>
 
-    <div class="form-group"><label>Telefone 1</label><input id="mcli-tel" placeholder="(51) 9 9999-9999" oninput="formatarTelefone(this)" maxlength="16"></div>
-    <div class="form-group"><label>Telefone 2</label><input id="mcli-tel2" placeholder="(51) 9 9999-9999" oninput="formatarTelefone(this)" maxlength="16"></div>
-    <div class="form-group"><label>Telefone 3</label><input id="mcli-tel3" placeholder="(51) 9 9999-9999" oninput="formatarTelefone(this)" maxlength="16"></div>
-    <div class="form-group"><label>E-mail 1</label><input id="mcli-eml" type="email" placeholder="email@empresa.com.br"></div>
-    <div class="form-group ff"><label>E-mail 2</label><input id="mcli-eml2" type="email" placeholder="email2@empresa.com.br"></div>
+    <div class="sec-t">Contato</div>
+    <div class="form-group sp2"><label>Telefone 1</label><input id="mcli-tel" placeholder="(51) 9 9999-9999" oninput="formatarTelefone(this)" maxlength="16"></div>
+    <div class="form-group sp2"><label>Telefone 2</label><input id="mcli-tel2" placeholder="(51) 9 9999-9999" oninput="formatarTelefone(this)" maxlength="16"></div>
+    <div class="form-group sp2"><label>Telefone 3</label><input id="mcli-tel3" placeholder="(51) 9 9999-9999" oninput="formatarTelefone(this)" maxlength="16"></div>
+    <div class="form-group sp2"><label>Responsável</label><input id="mcli-cont" placeholder="Nome do responsável"></div>
+    <div class="form-group sp2"><label>E-mail 1</label><input id="mcli-eml" type="email" placeholder="email@empresa.com.br"></div>
+    <div class="form-group sp2"><label>E-mail 2</label><input id="mcli-eml2" type="email" placeholder="email2@empresa.com.br"></div>
 
-    <!-- CEP com busca automática -->
-    <div class="form-group">
+    <div class="sec-t">Endereço</div>
+    <div class="form-group sp2">
       <label style="display:flex;align-items:center;gap:6px">
         CEP
         <span id="mcli-cep-status" style="font-size:10px;font-weight:400;color:var(--text3)"></span>
       </label>
       <div style="display:flex;gap:6px">
-        <input id="mcli-cep" placeholder="00000-000" maxlength="9"
-          oninput="formatarCEP(this)"
-          onblur="buscarCEP()"
-          style="flex:1">
-        <button onclick="buscarCEP()"
-          style="padding:0 14px;border-radius:var(--r);border:1px solid var(--border2);background:rgba(34,197,94,.1);color:#22c55e;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">
-          📍 Buscar
-        </button>
+        <input id="mcli-cep" placeholder="00000-000" maxlength="9" oninput="formatarCEP(this)" onblur="buscarCEP()" style="flex:1;min-width:0">
+        <button type="button" class="btn-busca gr" onclick="buscarCEP()" title="Buscar endereço pelo CEP">📍</button>
       </div>
     </div>
-
-    <div class="form-group ff"><label>Endereço (Rua / Av.)</label><input id="mcli-end" placeholder="Rua, Av. — preenchido pelo CEP"></div>
-    <div class="form-group"><label>Número</label><input id="mcli-num" placeholder="Ex: 748"></div>
-    <div class="form-group ff"><label>Complemento</label><input id="mcli-comp" placeholder="Ex: Sl.101, Apto 302, Bloco B"></div>
-    <div class="form-group"><label>Bairro</label><input id="mcli-bai" placeholder="Bairro"></div>
-    <div class="form-group"><label>Cidade</label><input id="mcli-cid" placeholder="Porto Alegre"></div>
-    <div class="form-group"><label>UF</label><input id="mcli-uf" placeholder="RS" maxlength="2" style="width:80px"></div>
-    <div class="form-group"><label>Insc. Estadual</label><input id="mcli-ie" placeholder="Nº ou ISENTO"></div>
-    <div class="form-group"><label>Insc. Municipal</label><input id="mcli-im" placeholder="Nº ou ISENTO"></div>
-    <div class="form-group"><label>Contato</label><input id="mcli-cont" placeholder="Nome do responsável"></div>
+    <div class="form-group sp3"><label>Endereço (Rua / Av.)</label><input id="mcli-end" placeholder="Preenchido pelo CEP"></div>
+    <div class="form-group sp1"><label>Número</label><input id="mcli-num" placeholder="748"></div>
+    <div class="form-group sp3"><label>Complemento</label><input id="mcli-comp" placeholder="Ex: Sl.101, Apto 302, Bloco B"></div>
+    <div class="form-group sp3"><label>Bairro</label><input id="mcli-bai" placeholder="Bairro"></div>
+    <div class="form-group sp4"><label>Cidade</label><input id="mcli-cid" placeholder="Porto Alegre"></div>
+    <div class="form-group sp2"><label>UF</label><input id="mcli-uf" placeholder="RS" maxlength="2"></div>
 
     <!-- Endereço de Instalação -->
-    <div class="form-group ff" style="border-top:1px solid var(--border);padding-top:14px;margin-top:6px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <label style="font-size:12px;font-weight:600;color:var(--text);display:block;margin:0">
-          📍 Endereço de Instalação
-        </label>
-      </div>
+    <div class="form-group ff" style="padding-top:0;margin-top:6px">
+      <div class="sec-t" style="margin:0 0 12px">Endereço de instalação</div>
       <!-- Toggle Mesmo endereço -->
       <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);cursor:pointer;margin-bottom:10px"
            onclick="toggleEndInstalacao()">
@@ -2108,12 +2157,8 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
     </div>
 
     <!-- Equipamentos em Locação -->
-    <div class="form-group ff" id="mcli-equips-section" style="border-top:1px solid var(--border);padding-top:14px;margin-top:6px;display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <label style="font-size:12px;font-weight:600;color:var(--text);display:block;margin:0">
-          🖨️ Equipamentos em Locação
-          <span id="mcli-equips-count" style="font-size:10px;font-weight:400;color:var(--text3)"></span>
-        </label>
+    <div class="form-group ff" id="mcli-equips-section" style="margin-top:6px;display:none">
+      <div class="sec-t" style="justify-content:space-between;margin:0 0 12px"><span>Equipamentos em locação \1</span>
         <button onclick="goPage('equipamentos');closeModal('modal-cli')"
           style="padding:3px 10px;border-radius:var(--r);border:1px solid var(--border2);background:transparent;color:var(--or);font-size:11px;cursor:pointer;font-weight:600">
           Ver todos →
@@ -2123,11 +2168,8 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
     </div>
 
     <!-- Documentos anexos -->
-    <div class="form-group ff" style="border-top:1px solid var(--border);padding-top:14px;margin-top:6px">
-      <label style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;display:block">
-        📎 Arquivos / Documentos
-        <span style="font-size:10px;font-weight:400;color:var(--text3)">— RG, CNH, Contrato Social e outros</span>
-      </label>
+    <div class="form-group ff" style="margin-top:6px">
+      <div class="sec-t" style="margin:0 0 12px">Arquivos e documentos <span style="font-size:11px;font-weight:400;color:var(--text3)">— RG, CNH, contrato social e outros</span></div>
       <div id="mcli-docs-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
       <button onclick="adicionarAnexoCli()"
         style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r);border:1px dashed var(--border2);background:transparent;color:#ff6a00;font-size:12px;font-weight:600;cursor:pointer;width:fit-content">
@@ -2359,9 +2401,6 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
 <div class="toast" id="toast"></div>
 
 <!-- ═══════════════════════════════════════════════════════
-     PÁGINA: ORÇAMENTOS
-
-<!-- ═══════════════════════════════════════════════════════
      MODAL: ORÇAMENTO
 ═══════════════════════════════════════════════════════ -->
 <div class="mbg" id="modal-orc">
@@ -2423,6 +2462,20 @@ Equipamentos entregues com 01 cabo de força + 03 tonners.</textarea>
         <div class="form-group ff">
           <label>Título / Descrição resumida</label>
           <input id="morc-desc" placeholder="Ex: Locação impressora HP M428, 12 meses">
+        </div>
+        <div class="form-group ff orc-loc-box">
+          <div class="orc-loc-head"><span>📅 Prazo da locação</span><span id="morc-loc-dur" class="orc-loc-dur"></span></div>
+          <div class="orc-loc-grid">
+            <div class="form-group"><label>📦 Data de entrega</label><input id="morc-loc-ini" type="date" onchange="orcLocCalc()"></div>
+            <div class="form-group"><label>↩️ Data de devolução</label><input id="morc-loc-fim" type="date" onchange="orcLocCalc()"></div>
+          </div>
+          <div class="orc-loc-quick"><span>Calcular a devolução pelo prazo:</span>
+            <button type="button" class="btn-prazo" onclick="orcLocPrazo(3)">3 meses</button>
+            <button type="button" class="btn-prazo" onclick="orcLocPrazo(6)">6 meses</button>
+            <button type="button" class="btn-prazo" onclick="orcLocPrazo(12)">12 meses</button>
+            <button type="button" class="btn-prazo" onclick="orcLocPrazo(24)">24 meses</button>
+            <button type="button" class="btn-prazo" onclick="orcLocLimpar()">Limpar</button>
+          </div>
         </div>
         <div class="form-group">
           <label>Data do orçamento</label>
@@ -3107,7 +3160,7 @@ function applyCtx(page, ctx) {
 
 function tbAction() {
   const page = document.querySelector('.page.active')?.id?.replace('page-','');
-  if (page==='clientes'||page==='dashboard') openModal('modal-cli',null);
+  if (page==='clientes'||page==='dashboard') { S.editIdx.cli=null; limparFormCli(); g('mcli-title').textContent='Cadastro de Cliente'; openModal('modal-cli',null); }
   else if (page==='os') openModal('modal-os',null);
   else if (page==='locacao') openModal('modal-loc',null);
   else if (page==='estoque') openModal('modal-prod',null);
@@ -3376,28 +3429,28 @@ function renderCli() {
     </td>
     <td class="mono" style="color:var(--text2)">${c.cnpj || '—'}</td>
     <td style="color:var(--text2)">${c.cidade || '—'}</td>
-    <td class="mono" style="color:#ddd">${c.tel1 || '—'}</td>
+    <td class="mono" style="color:var(--text2)">${c.tel1 || '—'}</td>
     <td>
       <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
         ${temLoc ? `<button onclick="irLocacaoCliente('${esc(c.nome).replace(/'/g,"\\'")}')"
           title="Ver Locação"
-          style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:4px;border:1px solid rgba(168,85,247,.4);background:rgba(168,85,247,.12);color:#c084fc;font-size:10px;font-weight:700;cursor:pointer">
+          class="cli-tag loc">
           📋 Locação
         </button>` : ''}
         ${osAbertas > 0 ? `<button onclick="irOSCliente('${esc(c.nome).replace(/'/g,"\\'")}')"
           title="Ver OS abertas (${osAbertas})"
-          style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:4px;border:1px solid rgba(255,106,0,.4);background:rgba(255,106,0,.12);color:#ff6a00;font-size:10px;font-weight:700;cursor:pointer">
+          class="cli-tag os">
           🔧 OS (${osAbertas})
         </button>` : ''}
       </div>
     </td>
-    <td style="display:flex;gap:4px;flex-wrap:wrap;max-width:230px">
+    <td><div class="cli-act">
       <button class="btn btn-xs" onclick="editCli(${i})">Editar</button>
       <button class="btn btn-xs btn-or" onclick="novaOSdoCliente(${i})">+ OS</button>
-      <button class="btn btn-xs" style="background:rgba(13,148,136,.12);color:#0d9488;border-color:rgba(13,148,136,.4)" onclick="abrirPortalCliente(${i})" title="Abrir Portal do Cliente (visão para compartilhar)">🔗 Portal</button>
-      <button class="btn btn-xs" style="background:rgba(217,94,0,.1);color:var(--or);border-color:rgba(217,94,0,.35)" onclick="abrirLinhaDoTempoCliente(${i})" title="Ver todos os lançamentos deste cliente (OS, contratos, aditivos, orçamentos, financeiro)">🕒 Histórico</button>
-      <button class="btn btn-xs" style="background:rgba(37,99,235,.1);color:#2563eb;border-color:rgba(37,99,235,.35)" onclick="abrirEquipamentosCliente(${i})" title="Ver equipamentos locados por este cliente (data, OS, modelo e valor)">📦 Equipamentos</button>
-    </td></tr>`;
+      <button class="btn btn-xs btn-lk lk-teal" onclick="abrirPortalCliente(${i})" title="Abrir Portal do Cliente (visão para compartilhar)">🔗 Portal</button>
+      <button class="btn btn-xs btn-lk lk-or" onclick="abrirLinhaDoTempoCliente(${i})" title="Ver todos os lançamentos deste cliente (OS, contratos, aditivos, orçamentos, financeiro)">🕒 Histórico</button>
+      <button class="btn btn-xs btn-lk lk-bl" onclick="abrirEquipamentosCliente(${i})" title="Ver equipamentos locados por este cliente (data, OS, modelo e valor)">📦 Equipamentos</button>
+    </div></td></tr>`;
   }).join('') || '<tr><td colspan="6" class="empty">Nenhum cliente encontrado.</td></tr>';
 
   renderPag('pag-cli', filtrados.length, pg, n => { S.pages.cli = n; renderCli(); });
@@ -10357,6 +10410,8 @@ function _orcDadosForm() {
     desc:     g('morc-desc')?.value.trim()||'',
     data:     g('morc-data')?.value||'',
     validade: g('morc-validade')?.value||'15',
+    locIni:   g('morc-loc-ini')?.value||'',
+    locFim:   g('morc-loc-fim')?.value||'',
     vendedor: g('morc-vendedor')?.value.trim()||'',
     pgto:     g('morc-pgto')?.value||'',
     obs:      g('morc-obs')?.value.trim()||'',
@@ -10393,6 +10448,8 @@ function abrirModalOrc(idx) {
     g('morc-desc').value    = o.desc||'';
     g('morc-data').value    = o.data||'';
     g('morc-validade').value= o.validade||'15';
+    g('morc-loc-ini').value = o.locIni||'';
+    g('morc-loc-fim').value = o.locFim||'';
     g('morc-vendedor').value= o.vendedor||'';
     g('morc-pgto').value    = o.pgto||'À vista';
     g('morc-obs').value     = o.obs||'';
@@ -10411,6 +10468,8 @@ function abrirModalOrc(idx) {
     g('morc-desc').value    = '';
     g('morc-data').value    = new Date().toISOString().split('T')[0];
     g('morc-validade').value= '15';
+    g('morc-loc-ini').value = '';
+    g('morc-loc-fim').value = '';
     g('morc-vendedor').value= S.currentUser?.nome||'';
     g('morc-pgto').value    = 'À vista';
     g('morc-obs').value     = '';
@@ -10422,6 +10481,7 @@ function abrirModalOrc(idx) {
 
   renderItensOrc();
   calcTotalOrc();
+  orcLocCalc();
   orcTab('dados');
   openModal('modal-orc', idx);
 }
@@ -10517,17 +10577,40 @@ function removeItemOrc(i) {
 function renderItensOrc() {
   const el = g('orc-itens-lista');
   if (!_orcItens.length) { el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px 0">Nenhum item adicionado.</div>'; return; }
-  el.innerHTML = _orcItens.map((it,i)=>`
-    <div class="orc-item-row">
-      <span style="color:var(--text);display:flex;align-items:center;gap:8px">
+  const unids=['un','mês','hr','kg','m','pç'];
+  const attr=v=>esc(v).replace(/"/g,'&quot;');
+  const cab=`<div class="orc-item-head"><span>Descrição</span><span>Qtd</span><span>Unid.</span><span>Valor unit. (R$)</span><span style="text-align:right">Total</span><span></span></div>`;
+  el.innerHTML = cab + _orcItens.map((it,i)=>{
+    const lista = unids.includes(it.un) ? unids : unids.concat([it.un]);
+    const opts = lista.map(u=>`<option${u===it.un?' selected':''}>${esc(u)}</option>`).join('');
+    return `
+    <div class="orc-item-row edit">
+      <div class="oi-desc">
         ${it.foto ? `<img src="${it.foto}" style="width:26px;height:26px;object-fit:cover;border-radius:5px;flex-shrink:0">` : ''}
-        <span>${esc(it.desc)}</span>
-      </span>
-      <span style="color:var(--text2);text-align:center">${it.qtd} ${esc(it.un)}</span>
-      <span></span>
-      <span style="color:var(--text);font-family:var(--mono);text-align:right">R$ ${fmtMoney(it.vl)}</span>
-      <button class="orc-item-del" onclick="removeItemOrc(${i})">×</button>
-    </div>`).join('');
+        <input class="oi-in" value="${attr(it.desc)}" placeholder="Descrição do item" oninput="editItemOrc(${i},'desc',this)">
+      </div>
+      <input class="oi-in oi-n" type="number" min="0" step="any" value="${it.qtd}" oninput="editItemOrc(${i},'qtd',this)" onchange="editItemOrc(${i},'qtd',this,true)" title="Quantidade">
+      <select class="oi-in" onchange="editItemOrc(${i},'un',this)" title="Unidade">${opts}</select>
+      <input class="oi-in oi-n" type="number" min="0" step="0.01" value="${it.vl}" oninput="editItemOrc(${i},'vl',this)" onchange="editItemOrc(${i},'vl',this,true)" title="Valor unitário">
+      <span class="oi-tot" id="oi-tot-${i}">R$ ${fmtMoney(it.qtd*it.vl)}</span>
+      <button class="orc-item-del" onclick="removeItemOrc(${i})" title="Remover item">×</button>
+    </div>`;
+  }).join('');
+}
+
+// altera um item já adicionado, sem precisar apagar e refazer
+function editItemOrc(i, campo, el, fim) {
+  const it = _orcItens[i]; if (!it) return;
+  if (campo==='desc') { it.desc = el.value; }
+  else if (campo==='un') { it.un = el.value; }
+  else {
+    let n = parseFloat(String(el.value).replace(',','.'));
+    if (isNaN(n) || n<0) n = 0;
+    if (campo==='qtd') { if (fim && n<=0) { n = 1; el.value = 1; } it.qtd = n; }
+    else { it.vl = n; }
+  }
+  const t = g('oi-tot-'+i); if (t) t.textContent = 'R$ '+fmtMoney(it.qtd*it.vl);
+  calcTotalOrc();
 }
 
 function calcTotalOrc() {
@@ -10545,6 +10628,8 @@ function fmtMoney(v) {
 function saveOrc() {
   const cli = _ucliGetNome('ucli-orc');
   if (!cli) { toast('Informe o cliente!','err'); return; }
+  if (_orcItens.some(it=>!String(it.desc||'').trim())) { toast('Há um item sem descrição. Preencha ou remova o item.','err'); return; }
+  if (g('morc-loc-ini').value && g('morc-loc-fim').value && g('morc-loc-fim').value < g('morc-loc-ini').value) { toast('A data de devolução está antes da entrega. Corrija as datas.','err'); return; }
   const sub  = _orcItens.reduce((s,it)=>s+(it.qtd*it.vl),0);
   const desc = parseFloat(g('orc-desconto').value)||0;
   const d = {
@@ -10557,6 +10642,8 @@ function saveOrc() {
     desc:     g('morc-desc').value.trim(),
     data:     g('morc-data').value,
     validade: g('morc-validade').value,
+    locIni:   g('morc-loc-ini').value,
+    locFim:   g('morc-loc-fim').value,
     vendedor: g('morc-vendedor').value.trim(),
     pgto:     g('morc-pgto').value,
     obs:      g('morc-obs').value.trim(),
@@ -10601,7 +10688,25 @@ function renderOrcamentos() {
     let matchV = true;
     if (view === 'ativos')   matchV = ['rascunho','enviado'].includes(o.status);
     if (view === 'aprovado') matchV = o.status === 'aprovado';
-    return matchQ && matchV;
+    // filtro de período (emissão ou locação)
+    const pTipo=g('orc-per-tipo')?.value||'entrega', pDe=g('orc-per-de')?.value||'', pAte=g('orc-per-ate')?.value||'';
+    let matchP=true;
+    if (pDe||pAte) {
+      if (pTipo==='locacao') {
+        const ini=o.locIni||o.locFim||'', fim=o.locFim||o.locIni||'';
+        if (!ini&&!fim) matchP=false;
+        else { if (pDe && fim<pDe) matchP=false; if (pAte && ini>pAte) matchP=false; }
+      } else if (pTipo==='entrega' || pTipo==='devolucao') {
+        const d=(pTipo==='entrega'?o.locIni:o.locFim)||'';
+        if (!d) matchP=false;
+        else { if (pDe && d<pDe) matchP=false; if (pAte && d>pAte) matchP=false; }
+      } else {
+        const d=o.data||'';
+        if (!d) matchP=false;
+        else { if (pDe && d<pDe) matchP=false; if (pAte && d>pAte) matchP=false; }
+      }
+    }
+    return matchQ && matchV && matchP;
   });
 
   // Ordenação
@@ -10683,6 +10788,7 @@ function renderOrcamentos() {
         <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:2px">${esc(o.num||'—')}</div>
         <div style="font-size:13px;font-weight:700;color:var(--or);cursor:pointer;line-height:1.2" onclick="abrirModalOrc(${idx})">${esc(o.cliente||'—')}</div>
         ${o.tel ? `<div style="font-size:11px;color:var(--text3);margin-top:1px">${esc(o.tel)}</div>` : ''}
+        ${(o.locIni||o.locFim) ? `<div style="font-size:10.5px;color:var(--text3);margin-top:2px">📦 ${_orcFmtISO(o.locIni)} &nbsp;→&nbsp; ↩️ ${_orcFmtISO(o.locFim)}</div>` : ''}
       </div>
       <!-- Descrição -->
       <div style="font-size:12px;color:var(--text2);padding-right:10px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(o.desc||'—')}</div>
@@ -10810,6 +10916,25 @@ function _buildOrcHTML(o, LOGO) {
     const v=new Date(dataISO+'T12:00:00');
     v.setDate(v.getDate()+validade);
     validFmt=fD(v.toISOString().split('T')[0]);
+  }
+
+  let locHTML='';
+  if (o.locIni||o.locFim) {
+    const dur=_orcLocTexto(o.locIni,o.locFim);
+    locHTML=`<div class="pp-cond-grid">
+    <div>
+      <div class="pp-cond-hdr">Data de Entrega</div>
+      <div class="pp-cond-val">${o.locIni?fD(o.locIni):'—'}</div>
+    </div>
+    <div>
+      <div class="pp-cond-hdr">Data de Devolução</div>
+      <div class="pp-cond-val">${o.locFim?fD(o.locFim):'—'}</div>
+    </div>
+    <div>
+      <div class="pp-cond-hdr">Prazo da Locação</div>
+      <div class="pp-cond-val">${dur||'—'}</div>
+    </div>
+  </div>`;
   }
 
   const stLbls={rascunho:'RASCUNHO',enviado:'ENVIADO',aprovado:'APROVADO',recusado:'RECUSADO'};
@@ -10941,6 +11066,8 @@ function _buildOrcHTML(o, LOGO) {
       <div class="pp-cond-val">${validade} dias<div class="pp-cond-sub">A partir da emissão</div></div>
     </div>
   </div>
+
+  ${locHTML}
 
   ${obs?`
   <!-- 4. OBSERVAÇÕES -->
@@ -11091,6 +11218,8 @@ function enviarWhatsappOrcIdx(idx) {
   if (o.data) msg += `*Data:* ${new Date(o.data+'T00:00:00').toLocaleDateString('pt-BR')}\n`;
   if (validStr) msg += `*Válido até:* ${validStr}\n`;
   if (o.pgto) msg += `*Pagamento:* ${o.pgto}\n`;
+  if (o.locIni) msg += `*Entrega:* ${_orcFmtISO(o.locIni)}\n`;
+  if (o.locFim) msg += `*Devolução:* ${_orcFmtISO(o.locFim)}\n`;
   msg += `———————————————\n`;
   if (o.itens&&o.itens.length) {
     msg += `*Itens:*\n`;
@@ -12014,6 +12143,53 @@ function baixarBackupLocal(){
     setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
     msg('✓ Backup baixado: '+arquivo+' — '+n('clientes')+' clientes, '+n('ordens')+' OS, '+n('comodato')+' contratos, '+n('orcamentos')+' orçamentos.',true);
   }catch(e){ console.error(e); msg('Erro ao gerar o backup. Tente de novo.',false); }
+}
+</script>
+
+<!-- ═══ UPGRADE v4.2: período de locação (de/até) nos orçamentos ═══ -->
+<script>
+function _orcFmtISO(iso){
+  if(!iso) return '—';
+  var p=String(iso).split('-'); if(p.length!==3) return iso;
+  return p[2]+'/'+p[1]+'/'+p[0];
+}
+function _orcLocTexto(ini,fim){
+  if(!ini||!fim||fim<ini) return '';
+  var a=new Date(ini+'T12:00:00'), b=new Date(fim+'T12:00:00');
+  var dias=Math.round((b-a)/86400000)+1;
+  var meses=Math.round(dias/30.4375);
+  return (meses>=1 ? meses+(meses===1?' mês':' meses')+' · ' : '')+dias+(dias===1?' dia':' dias');
+}
+function orcLocCalc(){
+  var ini=document.getElementById('morc-loc-ini'), fim=document.getElementById('morc-loc-fim'), el=document.getElementById('morc-loc-dur');
+  if(!ini||!fim||!el) return;
+  el.classList.remove('err');
+  if(ini.value&&fim.value&&fim.value<ini.value){ el.textContent='A devolução está antes da entrega'; el.classList.add('err'); return; }
+  el.textContent=_orcLocTexto(ini.value,fim.value);
+}
+function orcLocPrazo(meses){
+  var ini=document.getElementById('morc-loc-ini'), fim=document.getElementById('morc-loc-fim');
+  if(!ini||!fim) return;
+  if(!ini.value){
+    var base=(document.getElementById('morc-data')||{}).value;
+    ini.value=base||new Date().toISOString().split('T')[0];
+  }
+  var d=new Date(ini.value+'T12:00:00'), dia=d.getDate();
+  d.setMonth(d.getMonth()+meses);
+  if(d.getDate()!==dia) d.setDate(0);      // ex.: 31/01 + 1 mês cai no fim de fevereiro
+  d.setDate(d.getDate()-1);                // termina um dia antes do aniversário
+  var z=function(x){return String(x).padStart(2,'0');};
+  fim.value=d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate());
+  orcLocCalc();
+}
+function orcLocLimpar(){
+  var ini=document.getElementById('morc-loc-ini'), fim=document.getElementById('morc-loc-fim');
+  if(ini) ini.value=''; if(fim) fim.value='';
+  orcLocCalc();
+}
+function limparPeriodoOrc(){
+  ['orc-per-de','orc-per-ate'].forEach(function(id){var e=document.getElementById(id); if(e) e.value='';});
+  if(typeof renderOrcamentos==='function') renderOrcamentos();
 }
 </script>
 </body>
