@@ -10867,6 +10867,31 @@ function excluirOrc(idx) {
   saveAll(); renderOrcamentos(); toast('Orçamento excluído','ok');
 }
 
+// Busca o cadastro completo do cliente pelo nome gravado no orçamento
+function _orcNorm(s){ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim(); }
+function _orcJuntar(arr){
+  const vistos = new Set(), out = [];
+  (arr||[]).forEach(v=>{ v=String(v||'').trim(); if(!v) return;
+    const k = v.toLowerCase().replace(/[^a-z0-9@.]/g,''); if(vistos.has(k)) return; vistos.add(k); out.push(v); });
+  return out;
+}
+function _orcCliCadastro(o){
+  const nome = _orcNorm(o && o.cliente);
+  const vazio = {fantasia:'',cnpj:'',ie:'',im:'',endereco:'',cidadeUf:'',cep:'',tel1:'',tel2:'',tel3:'',email:'',email2:'',contato:''};
+  if(!nome) return vazio;
+  const lista = (typeof S!=='undefined' && S.clientes) ? S.clientes : [];
+  let c = lista.find(x=>_orcNorm(x.nome)===nome) || lista.find(x=>_orcNorm(x.fantasia)===nome);
+  if(!c) return vazio;
+  const partes = [c.endereco, c.numero?('Nº '+c.numero):'', c.complemento||'', c.bairro||''].filter(Boolean);
+  return {
+    fantasia: c.fantasia||'', cnpj: c.cnpj||'', ie: c.ie||'', im: c.im||'',
+    endereco: partes.join(', '),
+    cidadeUf: (c.cidade && c.uf) ? (c.cidade+'/'+c.uf) : (c.cidade||c.uf||''),
+    cep: c.cep||'', tel1: c.tel1||'', tel2: c.tel2||'', tel3: c.tel3||'',
+    email: c.email||'', email2: c.email2||'', contato: c.contato||''
+  };
+}
+
 function _buildOrcHTML(o, LOGO) {
   const EMPRESA = {
     nome: 'CASA DA IMPRESSORA LTDA',
@@ -10881,7 +10906,8 @@ function _buildOrcHTML(o, LOGO) {
 
   const num      = o.num||'';
   const cliente  = o.cliente||'—';
-  const cnpj     = o.cnpj||'—';
+  const cadCli   = _orcCliCadastro(o);
+  const cnpj     = o.cnpj || cadCli.cnpj || '—';
   const tel      = o.tel||'—';
   const email    = o.email||'—';
   const descTxt  = o.desc||'';
@@ -11014,8 +11040,13 @@ function _buildOrcHTML(o, LOGO) {
       <td class="pp-id-cell">
         <div class="pp-id-nome">${esc(cliente)}</div>
         <div class="pp-id-info">
+          ${cadCli.fantasia?'Nome fantasia: '+esc(cadCli.fantasia)+'<br>':''}
           CNPJ / CPF: ${esc(cnpj)}<br>
-          ${tel!=='—'?tel+'<br>':''}${email!=='—'?email:''}
+          ${cadCli.ie?'Insc. Estadual: '+esc(cadCli.ie)+'<br>':''}${cadCli.im?'Insc. Municipal: '+esc(cadCli.im)+'<br>':''}
+          ${cadCli.endereco?esc(cadCli.endereco)+'<br>':''}${cadCli.cidadeUf?esc(cadCli.cidadeUf)+(cadCli.cep?' — CEP '+esc(cadCli.cep):'')+'<br>':(cadCli.cep?'CEP '+esc(cadCli.cep)+'<br>':'')}
+          ${_orcJuntar([o.tel,cadCli.tel1,cadCli.tel2,cadCli.tel3]).map(esc).join(' / ')}${_orcJuntar([o.tel,cadCli.tel1,cadCli.tel2,cadCli.tel3]).length?'<br>':''}
+          ${_orcJuntar([o.email,cadCli.email,cadCli.email2]).map(esc).join(' / ')}${_orcJuntar([o.email,cadCli.email,cadCli.email2]).length?'<br>':''}
+          ${cadCli.contato?'Contato: '+esc(cadCli.contato):''}
         </div>
       </td>
     </tr>
